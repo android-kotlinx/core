@@ -1,7 +1,6 @@
 package com.velox.lazeir.utils
 
 import android.annotation.SuppressLint
-import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -26,7 +25,7 @@ sealed class NetworkResource<T>(
 
     class Success<T>(data: T?) : NetworkResource<T>(data)
 
-    class Error<T>(message: String, errorObject: JSONObject?=null, data: T? = null) :
+    class Error<T>(message: String, errorObject: JSONObject? = null, data: T? = null) :
         NetworkResource<T>(data, message, errorObject)
 
     class Loading<T>(val isLoading: Boolean) : NetworkResource<T>(null)
@@ -76,10 +75,10 @@ fun <T, O> handleNetworkResponse(
             } else {
                 val errorBody = response.errorBody()!!.string()
                 try {
-                    val jObjError = errorBody.let { JSONObject(it) }
-                    emit(NetworkResource.Error("Network Error",jObjError))
+                    val jObjError = JSONObject(errorBody)
+                    emit(NetworkResource.Error("Network Error", jObjError))
                 } catch (e: Exception) {
-                    emit(NetworkResource.Error("UNKNOWN ERROR",null))
+                    emit(NetworkResource.Error("UNKNOWN ERROR", null))
                 }
 
             }
@@ -109,15 +108,15 @@ fun <T> handleNetworkResponse(response: Response<T>): Flow<NetworkResource<T>> {
             } else {
                 val errorBody = response.errorBody()!!.string()
                 try {
-                    val jObjError = errorBody.let { JSONObject(it) }
-                    emit(NetworkResource.Error("Network Error",jObjError))
+                    val jObjError = JSONObject(errorBody)
+                    emit(NetworkResource.Error("Network Error", jObjError))
                 } catch (e: Exception) {
                     emit(NetworkResource.Error("UNKNOWN ERROR"))
                 }
 
             }
         } catch (e: IOException) {
-            e.message?.let { emit(NetworkResource.Error(it))}
+            e.message?.let { emit(NetworkResource.Error(it)) }
         } catch (e: HttpException) {
             e.message?.let { emit(NetworkResource.Error(it)) }
         } catch (e: IllegalStateException) {
@@ -135,14 +134,14 @@ fun <T> handleNetworkResponse(response: Response<T>): Flow<NetworkResource<T>> {
 fun <T> handleFlow(
     response: Flow<NetworkResource<T>>,
     onLoading: (it: Boolean) -> Unit,
-    onFailure: (it: String, errorObject:JSONObject) -> Unit,
+    onFailure: (it: String, errorObject: JSONObject) -> Unit,
     onSuccess: (it: T) -> Unit
 ) {
     CoroutineScope(Dispatchers.Main).launch {
         response.collectLatest {
             when (it) {
                 is NetworkResource.Error -> {
-                    onFailure.invoke(it.message!!,it.errorObject!!)
+                    onFailure.invoke(it.message!!, it.errorObject!!)
                 }
                 is NetworkResource.Loading -> {
                     onLoading.invoke(it.isLoading)
