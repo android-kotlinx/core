@@ -6,19 +6,22 @@ import android.graphics.Bitmap
 import android.net.Uri
 import java.io.ByteArrayOutputStream
 
-fun convertBitmapToByteArray(bitmap: Bitmap): ByteArray? {
+
+/**
+ * Converting Bitmap to ByteArray
+ * */
+fun Bitmap.toByteArray(): ByteArray {
     val stream = ByteArrayOutputStream()
-    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+    compress(Bitmap.CompressFormat.PNG, 100, stream)
     return stream.toByteArray()
 }
 
+/**
+ * Converting Uri to ByteArray
+ * */
 @SuppressLint("Recycle")
-fun convertUriToByteArray(context: Context, uri: Uri?): ByteArray? {
-    if (uri == null) {
-        return null
-    }
-    val iStream = context.contentResolver.openInputStream(uri)
-
+fun Uri.toByteArray(context: Context): ByteArray? {
+    val iStream = context.contentResolver.openInputStream(this)
     val byteBuffer = ByteArrayOutputStream()
     val bufferSize = 1024
     val buffer = ByteArray(bufferSize)
@@ -31,5 +34,4 @@ fun convertUriToByteArray(context: Context, uri: Uri?): ByteArray? {
     } else {
         null
     }
-
 }
