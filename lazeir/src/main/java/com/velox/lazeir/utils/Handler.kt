@@ -76,7 +76,7 @@ fun <T, O> handleNetworkResponse(
                 val errorBody = response.errorBody()!!.string()
                 try {
                     val jObjError = JSONObject(errorBody)
-                    emit(NetworkResource.Error("Network Error", jObjError))
+                    emit(NetworkResource.Error("Response Error", jObjError))
                 } catch (e: Exception) {
                     emit(NetworkResource.Error("UNKNOWN ERROR", null))
                 }
