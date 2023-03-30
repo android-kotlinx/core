@@ -19,10 +19,12 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 
+/**
+ * Author: [Rajesh Khan]
+ * */
 sealed class NetworkResource<T>(
     val data: T? = null, val message: String? = null, val errorObject: JSONObject? = null
 ) {
-
     class Success<T>(data: T?) : NetworkResource<T>(data)
 
     class Error<T>(message: String, errorObject: JSONObject? = null, data: T? = null) :
@@ -32,7 +34,9 @@ sealed class NetworkResource<T>(
 
 }
 
-
+/**
+ * [awaitHandler]
+ * */
 suspend fun <T> Call<T>.awaitHandler(): T = suspendCoroutine { continuation ->
     val callback = object : Callback<T> {
         override fun onResponse(call: Call<T>, response: Response<T>) {
@@ -41,7 +45,6 @@ suspend fun <T> Call<T>.awaitHandler(): T = suspendCoroutine { continuation ->
                 response.body() ?: throw IllegalStateException("Response body is null")
             }
         }
-
         override fun onFailure(call: Call<T>, t: Throwable) = continuation.resumeWithException(t)
     }
     enqueue(callback)
@@ -57,7 +60,7 @@ private inline fun <T> Continuation<T>.resumeNormallyOrWithException(getter: () 
 
 
 /**
- * returnResponseBodyFlow handle the API response,
+ * [handleNetworkResponse] handle the API response,
  * convert the dto response to domain response
  * extracting the error according to the error code
  * **/
@@ -94,7 +97,7 @@ fun <T, O> handleNetworkResponse(
 }
 
 /**
- * returnResponseBodyFlow handle the API response,
+ * [handleNetworkResponse] handle the API response,
  * extracting the error according to the error code
  * **/
 @SuppressLint("LogNotTimber")
@@ -128,7 +131,7 @@ fun <T> handleNetworkResponse(response: Response<T>): Flow<NetworkResource<T>> {
 
 
 /**
- * handle() takes the response from use case function as Resource<> with in Main Coroutine Scope
+ * [handleFlow] takes the response from use case function as Resource<> with in Main Coroutine Scope
  * return the extracted response with in onLoading(),onFailure(),onSuccess()
  * **/
 fun <T> handleFlow(
@@ -153,7 +156,7 @@ fun <T> handleFlow(
         }
     }
 }
-
+//cr velox
 
 
 

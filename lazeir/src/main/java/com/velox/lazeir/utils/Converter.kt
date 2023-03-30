@@ -8,7 +8,7 @@ import java.io.ByteArrayOutputStream
 
 
 /**
- * Converting Bitmap to ByteArray
+ * [toByteArray] Converting Bitmap to ByteArray
  * */
 fun Bitmap.toByteArray(): ByteArray {
     val stream = ByteArrayOutputStream()
@@ -17,7 +17,7 @@ fun Bitmap.toByteArray(): ByteArray {
 }
 
 /**
- * Converting Uri to ByteArray
+ * [toByteArray] Converting Uri to ByteArray
  * */
 @SuppressLint("Recycle")
 fun Uri.toByteArray(context: Context): ByteArray? {
