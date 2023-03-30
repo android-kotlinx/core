@@ -3,6 +3,9 @@ package com.velox.lazeir.utils
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,6 +35,33 @@ fun internetConnectivityListener(
         }
     }.launchIn(lifecycleScope)
 }
+
+@Composable
+@OptIn(ExperimentalCoroutinesApi::class)
+fun InternetConnectivityListener(
+    lifecycleScope: LifecycleCoroutineScope,
+    stateChangeText: MutableLiveData<String>? = null,
+    onAvailable: () -> Unit,
+    onUnAvailable: () -> Unit = {},
+    onLosing: () -> Unit = {},
+    onLost: () -> Unit,
+) {
+    val applicationContext = LocalContext.current
+    val connectivityObserver = NetworkConnectivityObserver(applicationContext)
+    LaunchedEffect(connectivityObserver){
+        connectivityObserver.observe().onEach {
+            stateChangeText?.value = it.name
+            when (it) {
+                ConnectivityObserver.Status.Available -> onAvailable()
+                ConnectivityObserver.Status.Unavailable -> onUnAvailable()
+                ConnectivityObserver.Status.Losing -> onLosing()
+                ConnectivityObserver.Status.Lost -> onLost()
+            }
+        }.launchIn(lifecycleScope)
+
+    }
+}
+
 
 @ExperimentalCoroutinesApi
 private class NetworkConnectivityObserver(
