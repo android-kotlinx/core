@@ -70,4 +70,12 @@ dependencies {
     kapt 'androidx.hilt:hilt-compiler:1.0.0'
     implementation 'androidx.hilt:hilt-navigation-fragment:1.0.0'
 
+
+
+    implementation "androidx.activity:activity-compose:1.7.0"
+    implementation "androidx.activity:activity-ktx:1.7.0"
+    implementation "androidx.activity:activity-result:1.4.0"
+    implementation "androidx.activity:activity-registry:1.4.0"
+
+
 }
