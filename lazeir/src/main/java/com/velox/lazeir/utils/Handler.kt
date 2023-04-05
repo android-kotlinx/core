@@ -91,6 +91,8 @@ fun <T, O> handleNetworkResponse(
             e.message?.let { emit(NetworkResource.Error(it)) }
         } catch (e: IllegalStateException) {
             e.message?.let { emit(NetworkResource.Error(it)) }
+        } catch (e:NullPointerException){
+            e.message?.let { emit(NetworkResource.Error(it)) }
         }
         emit(NetworkResource.Loading(false))
     }
@@ -109,9 +111,9 @@ fun <T> handleNetworkResponse(response: Response<T>): Flow<NetworkResource<T>> {
                 emit(NetworkResource.Success(response.body()))
                 response.code()
             } else {
-                val errorBody = response.errorBody()!!.string()
+                val errorBody = response.errorBody()?.string()
                 try {
-                    val jObjError = JSONObject(errorBody)
+                    val jObjError = errorBody?.let { JSONObject(it) }
                     emit(NetworkResource.Error("Network Error", jObjError))
                 } catch (e: Exception) {
                     emit(NetworkResource.Error("UNKNOWN ERROR"))
@@ -123,6 +125,8 @@ fun <T> handleNetworkResponse(response: Response<T>): Flow<NetworkResource<T>> {
         } catch (e: HttpException) {
             e.message?.let { emit(NetworkResource.Error(it)) }
         } catch (e: IllegalStateException) {
+            e.message?.let { emit(NetworkResource.Error(it)) }
+        } catch (e:NullPointerException){
             e.message?.let { emit(NetworkResource.Error(it)) }
         }
         emit(NetworkResource.Loading(isLoading = false))
@@ -136,9 +140,9 @@ fun <T> handleNetworkResponse(response: Response<T>): Flow<NetworkResource<T>> {
  * **/
 fun <T> handleFlow(
     response: Flow<NetworkResource<T>>,
-    onLoading: (it: Boolean) -> Unit,
-    onFailure: (it: String, errorObject: JSONObject) -> Unit,
-    onSuccess: (it: T) -> Unit
+    onLoading: suspend (it: Boolean) -> Unit,
+    onFailure: suspend (it: String, errorObject: JSONObject) -> Unit,
+    onSuccess: suspend (it: T) -> Unit
 ) {
     CoroutineScope(Dispatchers.Main).launch {
         response.collectLatest {
