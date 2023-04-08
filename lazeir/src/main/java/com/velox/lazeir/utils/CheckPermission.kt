@@ -19,10 +19,8 @@ fun checkForPermission(permission: String, context: Context): Boolean =
 fun checkForPermission(permission: String): Boolean {
     val context = LocalContext.current
     return (ContextCompat.checkSelfPermission(
-        context,
-        permission
-    ) == PackageManager.PERMISSION_GRANTED
-            )
+        context, permission
+    ) == PackageManager.PERMISSION_GRANTED)
 }
 
 @Composable
@@ -48,8 +46,7 @@ fun ComposablePermissionRequest(
 
     LaunchedEffect(Unit) {
         if (ContextCompat.checkSelfPermission(
-                context,
-                permission
+                context, permission
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             // permission already granted, perform the action
