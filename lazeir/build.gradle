@@ -3,7 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id 'dagger.hilt.android.plugin'
+//    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -72,7 +72,7 @@ dependencies {
     // Gson
     implementation 'com.google.code.gson:gson:2.10'
 
-    //moshi
+//    //moshi
     implementation 'com.squareup.moshi:moshi:1.13.0'
     implementation 'com.squareup.moshi:moshi-kotlin:1.13.0'
     kapt "com.squareup.moshi:moshi-kotlin-codegen:1.13.0"
