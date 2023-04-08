@@ -8,22 +8,20 @@ import android.net.Uri
 import android.os.Build
 import android.util.Base64
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 
 
 /**
  * [toByteArray] Converting Bitmap to ByteArray
  * */
-fun Bitmap.toByteArray(): ByteArray {
-    val stream = ByteArrayOutputStream()
-    compress(Bitmap.CompressFormat.PNG, 100, stream)
-    return stream.toByteArray()
-}
 
-fun String.toBitMapFromBase64(): Bitmap {
-    val decodedBytes = Base64.decode(this, Base64.DEFAULT)
-    return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-}
+
+
 /**
  * [toByteArray] Converting Uri to ByteArray
  * */
@@ -47,10 +45,64 @@ fun Uri.toByteArray(context: Context): ByteArray? {
 @RequiresApi(Build.VERSION_CODES.O)
 fun ByteArray.toBase64(): String = String(java.util.Base64.getEncoder().encode(this))
 
-fun String.toEncodedBase64(): String{
-    return ""
+
+
+
+
+
+fun String?.toEncodedBase64(): String?{
+    val bytes = this?.toByteArray(Charsets.UTF_8)
+    return Base64.encodeToString(bytes, Base64.DEFAULT)
 }
 
-fun String.toDecodedBase64(): String{
-    return ""
+fun String?.toDecodedBase64(): String {
+    val bytes = this.let { Base64.decode(this, Base64.DEFAULT) }
+    return String(bytes, Charsets.UTF_8)
 }
+
+fun String?.toBitMapFromBase64(): Bitmap? {
+    return try {
+        val decodedBytes = Base64.decode(this, Base64.DEFAULT)
+        BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+    } catch (e: Exception) {
+        null
+    }
+}
+
+
+
+fun Bitmap?.cropCenter(): Bitmap? {
+    return try {
+        val centerX = (this?.width ?: 0) / 2
+        val centerY = (this?.height ?: 0) / 2
+        val width = 200
+        val height = 200
+        val left = centerX - (width / 2)
+        val top = centerY - (height / 2)
+        val right = centerX + (width / 2)
+        val bottom = centerY + (height / 2)
+        val croppedBitmap = Bitmap.createBitmap(this!!, left, top, width, height)
+        croppedBitmap
+    } catch (e: Exception) {
+        null
+    }
+
+}
+
+fun Bitmap?.toByteArray(): ByteArray? {
+    try {
+        ByteArrayOutputStream().use { stream ->
+            this?.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            return stream.toByteArray()
+        }
+    } catch (e: Exception) {
+        return null
+    }
+}
+
+/*
+fun Bitmap.toByteArray(): ByteArray {
+    val stream = ByteArrayOutputStream()
+    compress(Bitmap.CompressFormat.PNG, 100, stream)
+    return stream.toByteArray()
+}*/
