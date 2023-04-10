@@ -159,15 +159,15 @@ fun <T>  Response<T>.handleNetworkResponse(): Flow<NetworkResource<T>> {
 /**
  * [handleFlow] takes the response from use case function as Resource<> with in Main Coroutine Scope
  * return the extracted response with in onLoading(),onFailure(),onSuccess()
+ * Call within IO Scope
  * **/
-fun <T> handleFlow(
-    response: Flow<NetworkResource<T>>,
+suspend fun <T> Flow<NetworkResource<T>>.handleFlow(
     onLoading: suspend (it: Boolean) -> Unit,
     onFailure: suspend (it: String?, errorObject: JSONObject?, code: Int?) -> Unit,
     onSuccess: suspend (it: T) -> Unit
 ) {
     CoroutineScope(Dispatchers.Main).launch {
-        response.collectLatest {
+        this@handleFlow.collectLatest {
             when (it) {
                 is NetworkResource.Error -> {
                     onFailure.invoke(it.message, it.errorObject, it.code)

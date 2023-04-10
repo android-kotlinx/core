@@ -16,7 +16,6 @@ import java.io.ByteArrayOutputStream
  * */
 
 
-
 /**
  * [toByteArray] Converting Uri to ByteArray
  * */
@@ -38,31 +37,35 @@ fun Uri.toByteArray(context: Context): ByteArray? {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun ByteArray.toBase64(): String = String(java.util.Base64.getEncoder().encode(this))
+fun ByteArray?.toBase64(): String? = try {
+    String(java.util.Base64.getEncoder().encode(this))
+} catch (e: Exception) {
+    null
+}
 
 
-
-
-
-
-fun String?.toEncodedBase64(): String?{
+fun String?.toEncodedBase64(): String? = try {
     val bytes = this?.toByteArray(Charsets.UTF_8)
-    return Base64.encodeToString(bytes, Base64.DEFAULT)
+    Base64.encodeToString(bytes, Base64.DEFAULT)
+
+} catch (e: Exception) {
+    null
 }
 
-fun String?.toDecodedBase64(): String {
-    val bytes = this.let { Base64.decode(this, Base64.DEFAULT) }
-    return String(bytes, Charsets.UTF_8)
-}
 
-fun String?.toBitMapFromBase64(): Bitmap? {
-    return try {
+fun String?.toDecodedBase64(): String? =try {
+        val bytes = this.let { Base64.decode(this, Base64.DEFAULT) }
+        String(bytes, Charsets.UTF_8)
+    } catch (e: Exception) {
+        null
+    }
+
+fun String?.toBitMapFromBase64(): Bitmap? = try {
         val decodedBytes = Base64.decode(this, Base64.DEFAULT)
         BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
     } catch (e: Exception) {
         null
     }
-}
 
 
 
