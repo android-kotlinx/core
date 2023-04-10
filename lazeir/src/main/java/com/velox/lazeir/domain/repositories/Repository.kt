@@ -6,7 +6,7 @@ import okhttp3.RequestBody
 import okhttp3.ResponseBody
 
 interface Repository {
-    suspend fun getUrl(vUrl: String): Flow<NetworkResource<String>>
+    suspend fun getUrl(vUrl: String): Flow<NetworkResource<ResponseBody>>
     suspend fun getWithHeaderAuth(url: String, header: String): Flow<NetworkResource<ResponseBody>>
     suspend fun postWithReqBody(url: String, body: RequestBody): Flow<NetworkResource<ResponseBody>>
 

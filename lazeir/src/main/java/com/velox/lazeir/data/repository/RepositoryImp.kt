@@ -20,8 +20,8 @@ import javax.inject.Singleton
 class RepositoryImp @Inject constructor(
     private val apiService: ApiService,
 ) : Repository {
-    override suspend fun getUrl(vUrl: String): Flow<NetworkResource<String>> {
-        return flow {
+    override suspend fun getUrl(vUrl: String): Flow<NetworkResource<ResponseBody>> {
+       /* return flow {
             emit(NetworkResource.Loading(isLoading = true))
             try {
                 val response = apiService.getUrl(vUrl)
@@ -38,21 +38,22 @@ class RepositoryImp @Inject constructor(
                 e.message?.let { emit(NetworkResource.Error(it)) }
             }
             emit(NetworkResource.Loading(isLoading = false))
-        }
+        }*/
+        return  apiService.getUrl(vUrl).handleNetworkResponse()
     }
 
     override suspend fun getWithHeaderAuth(
         url: String,
         header: String
     ): Flow<NetworkResource<ResponseBody>> {
-        return handleNetworkResponse(apiService.getWithHeaderAuthorization(url, header))
+        return apiService.getWithHeaderAuthorization(url, header).handleNetworkResponse()
     }
 
     override suspend fun postWithReqBody(
         url: String,
         body: RequestBody
     ): Flow<NetworkResource<ResponseBody>> {
-        return (handleNetworkResponse(apiService.postWithRequestBody(url, body)))
+        return apiService.postWithRequestBody(url, body).handleNetworkResponse()
     }
 
     override suspend fun postWithHeaderAuthReqBody(
@@ -60,7 +61,7 @@ class RepositoryImp @Inject constructor(
         header: String,
         body: RequestBody
     ): Flow<NetworkResource<ResponseBody>> {
-        return handleNetworkResponse(apiService.postWithHeaderAuthReqBody(url, header, body))
+        return apiService.postWithHeaderAuthReqBody(url, header, body).handleNetworkResponse()
     }
 }
 
