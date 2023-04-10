@@ -43,7 +43,7 @@ sealed class NetworkResource<T>(
  * extracting the error according to the error code
  * **/
 fun <T, O> handleNetworkResponse(
-    call: () -> Response<T>, mapFun: (it: T) -> O
+    call: suspend () -> Response<T>, mapFun: (it: T) -> O
 ): Flow<NetworkResource<O>> {
     return flow {
         emit(NetworkResource.Loading(true))
@@ -153,6 +153,9 @@ fun <T>  Response<T>.handleNetworkResponse(): Flow<NetworkResource<T>> {
     }
 }
 
+
+
+
 /**
  * [handleFlow] takes the response from use case function as Resource<> with in Main Coroutine Scope
  * return the extracted response with in onLoading(),onFailure(),onSuccess()
@@ -179,6 +182,8 @@ fun <T> handleFlow(
         }
     }
 }
+
+
 
 /**
  * [awaitHandler]
