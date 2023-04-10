@@ -29,7 +29,7 @@ sealed class NetworkResource<T>(
 ) {
     class Success<T>(data: T?) : NetworkResource<T>(data)
 
-    class Error<T>(message: String?, errorObject: JSONObject? = null, code: Int? = null) :
+    class Error<T>(message: String, errorObject: JSONObject? = JSONObject(), code: Int? = -100) :
         NetworkResource<T>(null, message, errorObject, code)
 
     class Loading<T>(val isLoading: Boolean) : NetworkResource<T>(null)
@@ -60,9 +60,8 @@ fun <T, O> handleNetworkResponse(
                     val jObjError = JSONObject(errorBody)
                     emit(NetworkResource.Error("Response Error", jObjError, code))
                 } catch (e: Exception) {
-                    emit(NetworkResource.Error("UNKNOWN ERROR", null, code))
+                    e.message?.let { emit(NetworkResource.Error(it, null, code)) }
                 }
-
             }
         } catch (e: IOException) {
             e.message?.let { emit(NetworkResource.Error(it)) }
@@ -78,8 +77,6 @@ fun <T, O> handleNetworkResponse(
         emit(NetworkResource.Loading(false))
     }
 }
-
-
 
 
 /**
@@ -121,7 +118,7 @@ fun <T> handleNetworkResponse(response: Response<T>): Flow<NetworkResource<T>> {
 
 */
 
-fun <T>  Response<T>.handleNetworkResponse(): Flow<NetworkResource<T>> {
+fun <T> Response<T>.handleNetworkResponse(): Flow<NetworkResource<T>> {
     return flow {
         emit(NetworkResource.Loading(isLoading = true))
         try {
@@ -154,8 +151,6 @@ fun <T>  Response<T>.handleNetworkResponse(): Flow<NetworkResource<T>> {
 }
 
 
-
-
 /**
  * [handleFlow] takes the response from use case function as Resource<> with in Main Coroutine Scope
  * return the extracted response with in onLoading(),onFailure(),onSuccess()
@@ -163,14 +158,14 @@ fun <T>  Response<T>.handleNetworkResponse(): Flow<NetworkResource<T>> {
  * **/
 suspend fun <T> Flow<NetworkResource<T>>.handleFlow(
     onLoading: suspend (it: Boolean) -> Unit,
-    onFailure: suspend (it: String?, errorObject: JSONObject?, code: Int?) -> Unit,
+    onFailure: suspend (it: String, errorObject: JSONObject, code: Int) -> Unit,
     onSuccess: suspend (it: T) -> Unit
 ) {
     CoroutineScope(Dispatchers.Main).launch {
         this@handleFlow.collectLatest {
             when (it) {
                 is NetworkResource.Error -> {
-                    onFailure.invoke(it.message, it.errorObject, it.code)
+                    onFailure.invoke(it.message!!, it.errorObject!!, it.code!!)
                 }
                 is NetworkResource.Loading -> {
                     onLoading.invoke(it.isLoading)
@@ -182,7 +177,6 @@ suspend fun <T> Flow<NetworkResource<T>>.handleFlow(
         }
     }
 }
-
 
 
 /**
@@ -232,8 +226,8 @@ fun Response<*>.getJSONObject(): JSONObject? {
 }
 
 @SuppressLint("LogNotTimber")
-fun <T>  Call<T>.handleNetworkCall(): Flow<NetworkResource<T>> {
-    var code:Int?
+fun <T> Call<T>.handleNetworkCall(): Flow<NetworkResource<T>> {
+    var code: Int?
     return flow {
         emit(NetworkResource.Loading(isLoading = true))
         try {
