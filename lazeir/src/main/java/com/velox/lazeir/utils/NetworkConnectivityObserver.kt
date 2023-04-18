@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
@@ -14,31 +13,28 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalCoroutinesApi::class)
 fun internetConnectivityListener(
     lifecycleScope: LifecycleCoroutineScope,
-    applicationContext: Context,
-    stateChangeText: MutableLiveData<String>? = null,
-    onAvailable: () -> Unit,
-    onUnAvailable: () -> Unit = {},
-    onLosing: () -> Unit = {},
-    onLost: () -> Unit,
+    context: Context,
+    onAvailable: (it: String) -> Unit,
+    onUnAvailable: (it: String) -> Unit = {},
+    onLosing: (it: String) -> Unit = {},
+    onLost: (it: String) -> Unit,
 ) {
-    val connectivityObserver = NetworkConnectivityObserver(applicationContext)
+    val connectivityObserver = NetworkConnectivityObserver(context)
     connectivityObserver.observe().onEach {
-        stateChangeText?.value = it.name
         when (it) {
-            ConnectivityObserver.Status.Available -> onAvailable()
-            ConnectivityObserver.Status.Unavailable -> onUnAvailable()
-            ConnectivityObserver.Status.Losing -> onLosing()
-            ConnectivityObserver.Status.Lost -> onLost()
+            ConnectivityObserver.Status.Available -> onAvailable(it.name)
+            ConnectivityObserver.Status.Unavailable -> onUnAvailable(it.name)
+            ConnectivityObserver.Status.Losing -> onLosing(it.name)
+            ConnectivityObserver.Status.Lost -> onLost(it.name)
         }
     }.launchIn(lifecycleScope)
 }
 
 
-@OptIn(ExperimentalCoroutinesApi::class)
+/*@OptIn(ExperimentalCoroutinesApi::class)
 fun InternetConnectivityListener(
     lifecycleScope: LifecycleCoroutineScope,
-    stateChangeText: MutableLiveData<String>? = null,
-    onAvailable: () -> Unit,
+    onAvailable: (it:String) -> Unit,
     onUnAvailable: () -> Unit = {},
     onLosing: () -> Unit = {},
     onLost: () -> Unit,
@@ -58,7 +54,7 @@ fun InternetConnectivityListener(
     }.launchIn(lifecycleScope)
 
 //    }
-}
+}*/
 
 
 @ExperimentalCoroutinesApi

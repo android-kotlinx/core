@@ -8,8 +8,8 @@ fun checkForPermission(permission: String, context: Context): Boolean =
     context.packageManager.checkPermission(
         permission, context.packageName
     ) == PackageManager.PERMISSION_GRANTED
-/*
 
+/*
 @Composable
 fun checkForPermission(permission: String): Boolean {
     val context = LocalContext.current
