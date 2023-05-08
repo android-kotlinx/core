@@ -1,6 +1,7 @@
 package com.velox.lazeir.utils
 
 import android.annotation.SuppressLint
+import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -70,6 +71,8 @@ fun <T, O> handleNetworkResponse(
         } catch (e: IllegalStateException) {
             e.message?.let { emit(NetworkResource.Error(it)) }
         } catch (e: NullPointerException) {
+            e.message?.let { emit(NetworkResource.Error(it)) }
+        } catch (e: JsonSyntaxException) {
             e.message?.let { emit(NetworkResource.Error(it)) }
         } catch (e: Exception) {
             e.message?.let { emit(NetworkResource.Error(it)) }
@@ -142,6 +145,8 @@ fun <T> Response<T>.handleNetworkResponse(): Flow<NetworkResource<T>> {
         } catch (e: IllegalStateException) {
             e.message?.let { emit(NetworkResource.Error(it)) }
         } catch (e: NullPointerException) {
+            e.message?.let { emit(NetworkResource.Error(it)) }
+        } catch (e: JsonSyntaxException) {
             e.message?.let { emit(NetworkResource.Error(it)) }
         } catch (e: Exception) {
             e.message?.let { emit(NetworkResource.Error(it)) }
@@ -250,6 +255,8 @@ fun <T> Call<T>.handleNetworkCall(): Flow<NetworkResource<T>> {
             val message = e.message()
             emit(NetworkResource.Error(message, errorBody, code))
         } catch (e: Exception) {
+            e.message?.let { emit(NetworkResource.Error(it)) }
+        }catch (e: JsonSyntaxException) {
             e.message?.let { emit(NetworkResource.Error(it)) }
         }
         emit(NetworkResource.Loading(isLoading = false))
