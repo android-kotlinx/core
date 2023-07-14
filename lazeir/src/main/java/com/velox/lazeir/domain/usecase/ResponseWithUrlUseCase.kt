@@ -2,7 +2,7 @@ package com.velox.lazeir.domain.usecase
 
 
 import com.velox.lazeir.domain.repositories.Repository
-import com.velox.lazeir.utils.NetworkResource
+import com.velox.lazeir.utils.handler.NetworkResource
 import kotlinx.coroutines.flow.Flow
 import okhttp3.ResponseBody
 import javax.inject.Inject

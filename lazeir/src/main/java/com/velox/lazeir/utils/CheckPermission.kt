@@ -3,9 +3,29 @@ package com.velox.lazeir.utils
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.core.content.ContextCompat
 
+/**
+ * Then we check for different types of network transports like WIFI, CELLULAR, and ETHERNET.
+ *
+ * If any of these transports are available, we assume that the internet is accessible.
+ * **/
+fun Context.isInternetAvailable(): Boolean {
+    val connectivityManager =
+        getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val networkCapabilities = connectivityManager.activeNetwork ?: return false
+    val actNw = connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
 
+    return when {
+        actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+        // For other device-based internet connections such as Ethernet
+        actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+        else -> false
+    }
+}
 fun checkForPermission(permission: String, context: Context): Boolean =
     context.packageManager.checkPermission(
         permission, context.packageName

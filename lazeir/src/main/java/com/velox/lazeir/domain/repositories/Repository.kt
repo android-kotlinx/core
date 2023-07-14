@@ -1,6 +1,6 @@
 package com.velox.lazeir.domain.repositories
 
-import com.velox.lazeir.utils.NetworkResource
+import com.velox.lazeir.utils.handler.NetworkResource
 import kotlinx.coroutines.flow.Flow
 import okhttp3.RequestBody
 import okhttp3.ResponseBody

@@ -2,8 +2,8 @@ package com.velox.lazeir.data.repository
 
 import com.velox.lazeir.data.remote.ApiService
 import com.velox.lazeir.domain.repositories.Repository
-import com.velox.lazeir.utils.NetworkResource
 import com.velox.lazeir.utils.handleNetworkResponse
+import com.velox.lazeir.utils.handler.NetworkResource
 import kotlinx.coroutines.flow.Flow
 import okhttp3.RequestBody
 import okhttp3.ResponseBody

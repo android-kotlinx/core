@@ -1,4 +1,5 @@
-package com.velox.lazeir.utils
+/*
+package com.velox.lazeir.utils.internetobserver
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -31,6 +32,7 @@ fun internetConnectivityListener(
 }
 
 
+*/
 /*@OptIn(ExperimentalCoroutinesApi::class)
 fun InternetConnectivityListener(
     lifecycleScope: LifecycleCoroutineScope,
@@ -54,7 +56,8 @@ fun InternetConnectivityListener(
     }.launchIn(lifecycleScope)
 
 //    }
-}*/
+}*//*
+
 
 
 @ExperimentalCoroutinesApi
@@ -109,4 +112,4 @@ private interface ConnectivityObserver {
     enum class Status {
         Available, Unavailable, Losing, Lost
     }
-}
+}*/

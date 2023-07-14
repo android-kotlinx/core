@@ -1,4 +1,4 @@
-package com.velox.lazeir.utils
+package com.velox.lazeir.utils.handler
 
 import android.annotation.SuppressLint
 import com.google.gson.JsonSyntaxException
@@ -20,12 +20,12 @@ import kotlin.coroutines.suspendCoroutine
 
 
 
-
-/**
+/*
+*//**
  * [handleNetworkResponse] handle the API response,
  * convert the dto response to domain response
  * extracting the error according to the error code
- * **/
+ * **//*
 fun <T, O> handleNetworkResponse(
     call: suspend () -> Response<T>, mapFun: (it: T) -> O
 ): Flow<NetworkResource<O>> {
@@ -65,11 +65,11 @@ fun <T, O> handleNetworkResponse(
 }
 
 
-/**
+*//**
  * [handleNetworkResponse] handle the API response,
  * extracting the error according to the error code
- * **/
-/*
+ * **//*
+*//*
 fun <T> handleNetworkResponse(response: Response<T>): Flow<NetworkResource<T>> {
     return flow {
         emit(NetworkResource.Loading(isLoading = true))
@@ -102,7 +102,7 @@ fun <T> handleNetworkResponse(response: Response<T>): Flow<NetworkResource<T>> {
     }
 }
 
-*/
+*//*
 
 fun <T> Response<T>.handleNetworkResponse(): Flow<NetworkResource<T>> {
     return flow {
@@ -138,11 +138,11 @@ fun <T> Response<T>.handleNetworkResponse(): Flow<NetworkResource<T>> {
 }
 
 
-/**
+*//**
  * [handleFlow] takes the response from use case function as Resource<> with in Main Coroutine Scope
  * return the extracted response with in onLoading(),onFailure(),onSuccess()
  * Call within IO Scope
- * **/
+ * **//*
 suspend fun <T> Flow<NetworkResource<T>>.handleFlow(
     onLoading: suspend (it: Boolean) -> Unit,
     onFailure: suspend (it: String, errorObject: JSONObject, code: Int) -> Unit,
@@ -166,10 +166,10 @@ suspend fun <T> Flow<NetworkResource<T>>.handleFlow(
 }
 
 
-/**
+*//**
  * [awaitHandler]
- * */
-/*suspend fun <T> Call<T>.awaitHandler(): T = suspendCoroutine { continuation ->
+ * *//*
+*//*suspend fun <T> Call<T>.awaitHandler(): T = suspendCoroutine { continuation ->
     val callback = object : Callback<T> {
         override fun onResponse(call: Call<T>, response: Response<T>) {
             continuation.resumeNormallyOrWithException {
@@ -190,27 +190,10 @@ private inline fun <T> Continuation<T>.resumeNormallyOrWithException(getter: () 
     resumeWithException(exception)
 }
 
-*/
+*//*
 
 
-suspend fun <T> Call<T>.awaitHandler(): Response<T> = suspendCoroutine { continuation ->
-    val callback = object : Callback<T> {
-        override fun onResponse(call: Call<T>, response: Response<T>) {
-            continuation.resume(response)
-        }
 
-        override fun onFailure(call: Call<T>, t: Throwable) = continuation.resumeWithException(t)
-    }
-    enqueue(callback)
-}
-
-fun Response<*>.getJSONObject(): JSONObject? {
-    return try {
-        errorBody()?.string()?.let { JSONObject(it) }
-    } catch (exception: Exception) {
-        null
-    }
-}
 
 @SuppressLint("LogNotTimber")
 fun <T> Call<T>.handleNetworkCall(): Flow<NetworkResource<T>> {
@@ -243,12 +226,29 @@ fun <T> Call<T>.handleNetworkCall(): Flow<NetworkResource<T>> {
         }
         emit(NetworkResource.Loading(isLoading = false))
     }
-}
+}*/
 
 
 //cr velox
 
+internal suspend fun <T> Call<T>.awaitHandler(): Response<T> = suspendCoroutine { continuation ->
+    val callback = object : Callback<T> {
+        override fun onResponse(call: Call<T>, response: Response<T>) {
+            continuation.resume(response)
+        }
 
+        override fun onFailure(call: Call<T>, t: Throwable) = continuation.resumeWithException(t)
+    }
+    enqueue(callback)
+}
+
+internal fun Response<*>.getJSONObject(): JSONObject? {
+    return try {
+        errorBody()?.string()?.let { JSONObject(it) }
+    } catch (exception: Exception) {
+        null
+    }
+}
 
 
 
