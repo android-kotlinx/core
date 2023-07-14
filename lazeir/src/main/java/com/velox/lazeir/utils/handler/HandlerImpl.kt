@@ -24,7 +24,6 @@ class HandlerImpl : HandlerInterface {
         call: suspend () -> Response<T>, mapFun: (it: T) -> O
     ): Flow<NetworkResource<O>> {
         return flow {
-            CoroutineScope(Dispatchers.IO).launch {
                 emit(NetworkResource.Loading(true))
                 try {
 
@@ -56,14 +55,13 @@ class HandlerImpl : HandlerInterface {
                     e.message?.let { emit(NetworkResource.Error(it)) }
                 }
                 emit(NetworkResource.Loading(false))
-            }
+
         }
     }
 
 
     override fun <T> handleNetworkResponse(response: Response<T>): Flow<NetworkResource<T>> {
         return flow {
-            CoroutineScope(Dispatchers.IO).launch {
                 emit(NetworkResource.Loading(isLoading = true))
                 try {
                     val code = response.code()
@@ -92,7 +90,7 @@ class HandlerImpl : HandlerInterface {
                     e.message?.let { emit(NetworkResource.Error(it)) }
                 }
                 emit(NetworkResource.Loading(isLoading = false))
-            }
+
         }
     }
 
@@ -108,7 +106,6 @@ class HandlerImpl : HandlerInterface {
         onFailure: suspend (it: String, errorObject: JSONObject, code: Int) -> Unit,
         onSuccess: suspend (it: T) -> Unit
     ) {
-        CoroutineScope(Dispatchers.Main).launch {
             flow.collectLatest {
                 when (it) {
                     is NetworkResource.Error -> {
@@ -123,7 +120,7 @@ class HandlerImpl : HandlerInterface {
                         onSuccess.invoke(it.data!!)
                     }
                 }
-            }
+
         }
     }
 
@@ -132,7 +129,6 @@ class HandlerImpl : HandlerInterface {
     override fun <T> handleNetworkCall(call: Call<T>): Flow<NetworkResource<T>> {
         var code: Int?
         return flow {
-            CoroutineScope(Dispatchers.IO).launch {
                 emit(NetworkResource.Loading(isLoading = true))
                 try {
                     val apiCall = call.awaitHandler()
@@ -159,7 +155,7 @@ class HandlerImpl : HandlerInterface {
                     e.message?.let { emit(NetworkResource.Error(it)) }
                 }
                 emit(NetworkResource.Loading(isLoading = false))
-            }
+
         }
     }
 

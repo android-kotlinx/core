@@ -32,7 +32,6 @@ fun <T, O> handleNetworkResponse(
     return flow {
         emit(NetworkResource.Loading(true))
         try {
-
             val response = call.invoke()
             val code = response.code()
             if (response.isSuccessful) {
