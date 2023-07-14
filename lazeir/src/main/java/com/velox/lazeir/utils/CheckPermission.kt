@@ -1,13 +1,26 @@
 package com.velox.lazeir.utils
 
+import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 
 
 fun checkForPermission(permission: String, context: Context): Boolean =
     context.packageManager.checkPermission(
         permission, context.packageName
     ) == PackageManager.PERMISSION_GRANTED
+
+/**
+ * Checks whether Location Permission is granted or not
+ * **/
+fun Context.hasLocationPermission(): Boolean {
+    return ContextCompat.checkSelfPermission(
+        this, Manifest.permission.ACCESS_FINE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+        this, Manifest.permission.ACCESS_COARSE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
+}
 
 /*
 @Composable
