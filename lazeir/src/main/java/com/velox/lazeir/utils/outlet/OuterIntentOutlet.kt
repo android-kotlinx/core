@@ -13,13 +13,19 @@ import com.velox.lazeir.utils.outerIntent
  *
  * In child application manifest add the following code inside the
  *
+ * < queries>
+ *
+ * **< package android:name="com.example.package"/>**
+ *
+ * < /queries>
+ *
  * --> activity tag
  *
  * --> intent-filter tag
  *
- * **action android:name="com.example.package.ActivityName"**
+ * **< action android:name="com.example.package.ActivityName" / >**
  *
- * **category android:name="android.intent.category.DEFAULT"**
+ * **< category android:name="android.intent.category.DEFAULT" / >**
  *
  * remember to add  **implementation 'androidx.work:work-runtime-ktx:TAG'**
 
