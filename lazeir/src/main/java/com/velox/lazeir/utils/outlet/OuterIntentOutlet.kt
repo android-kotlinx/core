@@ -21,6 +21,6 @@ import com.velox.lazeir.utils.outerIntent
  *
  * category android:name="android.intent.category.DEFAULT"
  * */
-fun Context.startOuterActivity(packageName: String, activityName: String) {
-    outerIntent.startActivity(this, packageName, activityName)
+fun <T> Context.startOuterActivity(packageName: String, activityName: String,dataToIntent:List<Pair<String,T>>?) {
+    outerIntent.startActivity(this, packageName, activityName,dataToIntent)
 }
