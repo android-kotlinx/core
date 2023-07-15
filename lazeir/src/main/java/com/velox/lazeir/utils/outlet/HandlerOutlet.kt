@@ -1,8 +1,12 @@
-package com.velox.lazeir.utils
+package com.velox.lazeir.utils.outlet
 
 import android.annotation.SuppressLint
+import com.velox.lazeir.utils.handler
 import com.velox.lazeir.utils.handler.NetworkResource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
@@ -45,6 +49,16 @@ suspend fun <T> Flow<NetworkResource<T>>.handleFlow(
     onSuccess: suspend (it: T) -> Unit
 ) {
     return handler.handleFlow(this, onLoading, onFailure, onSuccess)
+}
+
+suspend fun <T> Flow<NetworkResource<T>>.handleFlowWithScope(
+    onLoading: suspend (it: Boolean) -> Unit,
+    onFailure: suspend (it: String, errorObject: JSONObject, code: Int) -> Unit,
+    onSuccess: suspend (it: T) -> Unit
+) {
+     CoroutineScope(Dispatchers.IO).launch {
+        return@launch handler.handleFlow(this@handleFlowWithScope, onLoading, onFailure, onSuccess)
+    }
 }
 
 

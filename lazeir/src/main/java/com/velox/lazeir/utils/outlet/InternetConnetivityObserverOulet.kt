@@ -1,7 +1,8 @@
-package com.velox.lazeir.utils
+package com.velox.lazeir.utils.outlet
 
 import android.content.Context
 import androidx.lifecycle.LifecycleCoroutineScope
+import com.velox.lazeir.utils.internetObserver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(ExperimentalCoroutinesApi::class)

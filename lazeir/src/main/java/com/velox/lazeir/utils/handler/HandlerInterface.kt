@@ -1,22 +1,10 @@
 package com.velox.lazeir.utils.handler
 
 import android.annotation.SuppressLint
-import com.google.gson.JsonSyntaxException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.HttpException
 import retrofit2.Response
-import java.io.IOException
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 interface HandlerInterface {
     fun <T, O> handleNetworkResponse(

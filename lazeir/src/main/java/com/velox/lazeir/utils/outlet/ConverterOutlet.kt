@@ -1,23 +1,11 @@
-package com.velox.lazeir.utils
+package com.velox.lazeir.utils.outlet
 
-import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
-import android.util.Base64
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
-import java.io.ByteArrayOutputStream
-import java.text.DecimalFormat
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
-
+import com.velox.lazeir.utils.converter
 
 
 fun Uri.toByteArray(context: Context): ByteArray? {
