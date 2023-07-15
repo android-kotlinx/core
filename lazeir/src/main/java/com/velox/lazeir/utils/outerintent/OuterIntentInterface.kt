@@ -7,6 +7,6 @@ interface OuterIntentInterface {
         context: Context,
         packageName: String,
         activityName: String,
-        dataToIntent: List<Pair<String, T>>?
+        dataToIntent: List<Pair<String, T?>?>?
     )
 }

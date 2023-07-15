@@ -17,10 +17,13 @@ import com.velox.lazeir.utils.outerIntent
  *
  * --> intent-filter tag
  *
- * action android:name="com.example.package.ActivityName"
+ * **action android:name="com.example.package.ActivityName"**
  *
- * category android:name="android.intent.category.DEFAULT"
+ * **category android:name="android.intent.category.DEFAULT"**
+ *
+ * remember to add  **implementation 'androidx.work:work-runtime-ktx:TAG'**
+
  * */
-fun <T> Context.startOuterActivity(packageName: String, activityName: String,dataToIntent:List<Pair<String,T>>?) {
+fun <T> Context.startOuterActivity(packageName: String, activityName: String,dataToIntent:List<Pair<String,T?>?>?) {
     outerIntent.startActivity(this, packageName, activityName,dataToIntent)
 }
