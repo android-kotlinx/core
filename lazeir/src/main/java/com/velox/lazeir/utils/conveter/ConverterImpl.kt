@@ -80,7 +80,6 @@ class ConverterImpl: ConverterInterface {
         } catch (e: Exception) {
             null
         }
-
     }
 
     override fun toByteArray(bitmap:Bitmap?): ByteArray? {
