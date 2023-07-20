@@ -4,6 +4,9 @@
 
 jst b lazeeee
 
+last stable : implementation 'com.github.blazebezz:lazier:1.0.0'
+test :implementation 'com.github.blazebezz:lazier:0.0.24-alpha'
+
                     GNU AFFERO GENERAL PUBLIC LICENSE
                        Version 3, 19 November 2007
 
