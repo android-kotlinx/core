@@ -19,7 +19,7 @@ class InstallerImpl : InstallerInterface {
             val permissionStatus =
                 ContextCompat.checkSelfPermission(context, packageInstallPermission)
 
-            if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
+//            if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
                 val intent = Intent(Intent.ACTION_VIEW).also {
                     it.setDataAndType(uri, "application/vnd.android.package-archive")
                     it.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -41,10 +41,9 @@ class InstallerImpl : InstallerInterface {
                 } else {
                     onError("Install failed, No handler application found!")
                 }
-
-            } else {
-                onError("External Package Permission Not Granted")
-            }
+//            } else {
+//                onError("External Package Permission Not Granted")
+//            }
 
 
         } catch (e: Exception) {
