@@ -5,9 +5,9 @@ import android.net.Uri
 
 interface InstallerInterface {
 
-    fun installApk(context: Context, uri: Uri)
+    fun installApk(context: Context, uri: Uri,onError: (String) -> Unit)
 
-    fun unInstallApk(context: Context, packageName: String)
+    fun unInstallApk(context: Context, packageName: String,onError: (String) -> Unit)
 
     fun isAppInstalled(context: Context, packageName: String): Boolean
 }

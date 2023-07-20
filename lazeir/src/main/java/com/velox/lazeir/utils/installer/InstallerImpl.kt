@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat
 
 class InstallerImpl : InstallerInterface {
     @SuppressLint("QueryPermissionsNeeded")
-    override fun installApk(context: Context, uri: Uri) {
+    override fun installApk(context: Context, uri: Uri,onError: (String) -> Unit) {
         try {
             val packageInstallPermission = Manifest.permission.REQUEST_INSTALL_PACKAGES
             val permissionStatus =
@@ -39,29 +39,21 @@ class InstallerImpl : InstallerInterface {
                 if (activities.isNotEmpty()) {
                     context.startActivity(intent)
                 } else {
-                    Toast.makeText(
-                        context,
-                        "Install failed, No handler application found!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    onError("Install failed, No handler application found!")
                 }
 
             } else {
-                Toast.makeText(
-                    context,
-                    "External Package Permission Not Granted",
-                    Toast.LENGTH_SHORT
-                ).show()
+                onError("External Package Permission Not Granted")
             }
 
 
         } catch (e: Exception) {
-            Toast.makeText(context, "Install failed", Toast.LENGTH_SHORT).show()
+            onError("Installation failed")
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun unInstallApk(context: Context, packageName: String) {
+    override fun unInstallApk(context: Context, packageName: String,onError: (String) -> Unit) {
         val packageInstallPermission = Manifest.permission.REQUEST_DELETE_PACKAGES
         val permissionStatus = ContextCompat.checkSelfPermission(context, packageInstallPermission)
 
@@ -77,10 +69,10 @@ class InstallerImpl : InstallerInterface {
 //        startActivityForResult(intent, REQUEST_UNINSTALL)
                 context.startActivity(intent)
             } catch (e: Exception) {
-                Toast.makeText(context, "unable to uninstall the package", Toast.LENGTH_SHORT).show()
+                onError("unable to uninstall the package")
             }
         } else {
-            Toast.makeText(context, "Application don't have package uninstallation permission", Toast.LENGTH_SHORT).show()
+            onError("Application don't have package uninstallation permission")
         }
     }
 
