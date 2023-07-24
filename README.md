@@ -3,6 +3,8 @@
 ![sleeping](https://github.com/blazebezz/lazier/assets/48889698/f09d096c-87ce-496e-a59e-50ccaa77aa37)
 
 jst b lazeeee
+[![](https://jitpack.io/v/blazebezz/lazier.svg)](https://jitpack.io/#blazebezz/lazier)
+
 
 last stable : implementation 'com.github.blazebezz:lazier:1.0.0'
 
