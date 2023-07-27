@@ -19,13 +19,17 @@ import com.velox.lazeir.utils.outerIntent
  *
  * < /queries>
  *
- * --> activity tag
+ * < activity>
  *
- * --> intent-filter tag
+ * < intent-filter>
  *
  * **< action android:name="com.example.package.ActivityName" / >**
  *
  * **< category android:name="android.intent.category.DEFAULT" / >**
+ *
+ * < /intent-filter>
+ *
+ * < /activity>
  *
  * remember to add  **implementation 'androidx.work:work-runtime-ktx:TAG'**
 

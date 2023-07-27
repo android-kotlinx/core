@@ -39,7 +39,7 @@ class InstallerImpl : InstallerInterface {
                 if (activities.isNotEmpty()) {
                     context.startActivity(intent)
                 } else {
-                    onError("Install failed, No handler application found!")
+                    onError("Install failed, Please Provide Proper URI")
                 }
 //            } else {
 //                onError("External Package Permission Not Granted")
@@ -47,6 +47,20 @@ class InstallerImpl : InstallerInterface {
 
 
         } catch (e: Exception) {
+            onError("Installation failed")
+        }
+    }
+
+    override fun installApk(
+        context: Context,
+        fileUri: String,
+        packageName: String,
+        onError: (String) -> Unit
+    ) {
+        try {
+
+        }catch (e:Exception){
+
             onError("Installation failed")
         }
     }
