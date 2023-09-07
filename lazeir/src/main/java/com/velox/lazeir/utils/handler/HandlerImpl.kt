@@ -2,9 +2,12 @@ package com.velox.lazeir.utils.handler
 
 import android.annotation.SuppressLint
 import com.google.gson.JsonSyntaxException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.HttpException
@@ -23,19 +26,20 @@ class HandlerImpl : HandlerInterface {
         return flow {
                 emit(NetworkResource.Loading(true))
                 try {
-
-                    val response = call.invoke()
-                    val code = response.code()
-                    if (response.isSuccessful) {
-                        val data = response.body()?.let { mapFun(it) }
-                        emit(NetworkResource.Success(data))
-                    } else {
-                        val errorBody = response.errorBody()!!.string()
-                        try {
-                            val jObjError = JSONObject(errorBody)
-                            emit(NetworkResource.Error("Response Error", jObjError, code))
-                        } catch (e: Exception) {
-                            e.message?.let { emit(NetworkResource.Error(it, null, code)) }
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val response = call.invoke()
+                        val code = response.code()
+                        if (response.isSuccessful) {
+                            val data = response.body()?.let { mapFun(it) }
+                            emit(NetworkResource.Success(data))
+                        } else {
+                            val errorBody = response.errorBody()!!.string()
+                            try {
+                                val jObjError = JSONObject(errorBody)
+                                emit(NetworkResource.Error("Response Error", jObjError, code))
+                            } catch (e: Exception) {
+                                e.message?.let { emit(NetworkResource.Error(it, null, code)) }
+                            }
                         }
                     }
                 } catch (e: IOException) {
@@ -97,27 +101,34 @@ class HandlerImpl : HandlerInterface {
      * return the extracted response with in onLoading(),onFailure(),onSuccess()
      * Call within IO Scope
      * **/
-    override suspend fun <T> handleFlow(
+    override  fun <T> handleFlow(
         flow: Flow<NetworkResource<T>>,
-        onLoading: suspend (it: Boolean) -> Unit,
-        onFailure: suspend (it: String, errorObject: JSONObject, code: Int) -> Unit,
-        onSuccess: suspend (it: T) -> Unit
+        onLoading:  (it: Boolean) -> Unit,
+        onFailure:  (it: String, errorObject: JSONObject, code: Int) -> Unit,
+        onSuccess:  (it: T) -> Unit
     ) {
+        CoroutineScope(Dispatchers.IO).launch {
             flow.collectLatest {
                 when (it) {
                     is NetworkResource.Error -> {
-                        onFailure.invoke(it.message!!, it.errorObject!!, it.code!!)
+                        CoroutineScope(Dispatchers.Main).launch {
+                            onFailure.invoke(it.message!!, it.errorObject!!, it.code!!)
+                        }
                     }
 
                     is NetworkResource.Loading -> {
-                        onLoading.invoke(it.isLoading)
+                        CoroutineScope(Dispatchers.Main).launch {
+                            onLoading.invoke(it.isLoading)
+                        }
                     }
 
                     is NetworkResource.Success -> {
-                        onSuccess.invoke(it.data!!)
+                        CoroutineScope(Dispatchers.Main).launch {
+                            onSuccess.invoke(it.data!!)
+                        }
                     }
                 }
-
+            }
         }
     }
 
