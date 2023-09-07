@@ -26,20 +26,19 @@ class HandlerImpl : HandlerInterface {
         return flow {
                 emit(NetworkResource.Loading(true))
                 try {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val response = call.invoke()
-                        val code = response.code()
-                        if (response.isSuccessful) {
-                            val data = response.body()?.let { mapFun(it) }
-                            emit(NetworkResource.Success(data))
-                        } else {
-                            val errorBody = response.errorBody()!!.string()
-                            try {
-                                val jObjError = JSONObject(errorBody)
-                                emit(NetworkResource.Error("Response Error", jObjError, code))
-                            } catch (e: Exception) {
-                                e.message?.let { emit(NetworkResource.Error(it, null, code)) }
-                            }
+
+                    val response = call.invoke()
+                    val code = response.code()
+                    if (response.isSuccessful) {
+                        val data = response.body()?.let { mapFun(it) }
+                        emit(NetworkResource.Success(data))
+                    } else {
+                        val errorBody = response.errorBody()!!.string()
+                        try {
+                            val jObjError = JSONObject(errorBody)
+                            emit(NetworkResource.Error("Response Error", jObjError, code))
+                        } catch (e: Exception) {
+                            e.message?.let { emit(NetworkResource.Error(it, null, code)) }
                         }
                     }
                 } catch (e: IOException) {
@@ -101,11 +100,11 @@ class HandlerImpl : HandlerInterface {
      * return the extracted response with in onLoading(),onFailure(),onSuccess()
      * Call within IO Scope
      * **/
-    override  fun <T> handleFlow(
+    override suspend fun <T> handleFlow(
         flow: Flow<NetworkResource<T>>,
-        onLoading:  (it: Boolean) -> Unit,
-        onFailure:  (it: String, errorObject: JSONObject, code: Int) -> Unit,
-        onSuccess:  (it: T) -> Unit
+        onLoading: suspend (it: Boolean) -> Unit,
+        onFailure: suspend (it: String, errorObject: JSONObject, code: Int) -> Unit,
+        onSuccess: suspend (it: T) -> Unit
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             flow.collectLatest {

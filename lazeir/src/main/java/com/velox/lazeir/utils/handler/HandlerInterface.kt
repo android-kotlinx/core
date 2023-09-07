@@ -16,11 +16,11 @@ interface HandlerInterface {
 
 
 
-    fun <T> handleFlow(
+    suspend fun <T> handleFlow(
         flow:Flow<NetworkResource<T>>,
-        onLoading:  (it: Boolean) -> Unit,
-        onFailure:  (it: String, errorObject: JSONObject, code: Int) -> Unit,
-        onSuccess:  (it: T) -> Unit
+        onLoading: suspend (it: Boolean) -> Unit,
+        onFailure: suspend (it: String, errorObject: JSONObject, code: Int) -> Unit,
+        onSuccess: suspend (it: T) -> Unit
     )
 
 
