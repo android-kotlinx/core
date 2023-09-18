@@ -5,6 +5,7 @@
 jst b lazeeee
 
 
+
 last stable: implementation 'com.github.blazebezz:lazier:  [![](https://jitpack.io/v/blazebezz/lazier.svg)](https://jitpack.io/#blazebezz/lazier)'
 
                     GNU AFFERO GENERAL PUBLIC LICENSE
