@@ -3,7 +3,7 @@ package com.velox.lazeir.utils.handler
 import org.json.JSONObject
 
 /**
- * Author: [Rajesh Khan]
+ * Author: [cr velox]
  * */
 sealed class NetworkResource<T>(
     val data: T? = null,

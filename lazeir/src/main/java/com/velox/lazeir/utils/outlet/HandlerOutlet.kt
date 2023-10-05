@@ -13,15 +13,16 @@ import retrofit2.Response
 
 
 fun <T, O> handleNetworkResponse(
-    call: suspend () -> Response<T>, mapFun: (it: T) -> O
+    call: suspend () -> Response<T>,timeOut: Long = 10000L, mapFun: (it: T) -> O
 ): Flow<NetworkResource<O>> {
-    return handler.handleNetworkResponse(call, mapFun)
+    return handler.handleNetworkResponse(call, mapFun, timeOut)
 }
 
 /**
  * [handleNetworkResponse] handle the API response,
  * convert the dto response to domain response
  * extracting the error according to the error code
+ *
  * Way to use
  *
  * In Implementation
@@ -33,8 +34,8 @@ fun <T, O> handleNetworkResponse(
  *      }
  *
  * */
-fun <T> Response<T>.handleNetworkResponse(): Flow<NetworkResource<T>> {
-    return handler.handleNetworkResponse(this)
+fun <T> Response<T>.handleNetworkResponse(timeOut: Long = 10000L): Flow<NetworkResource<T>> {
+    return handler.handleNetworkResponse(this,  timeOut)
 }
 
 
@@ -63,7 +64,7 @@ suspend fun <T> Flow<NetworkResource<T>>.handleFlowWithScope(
 
 
 @SuppressLint("LogNotTimber")
-fun <T> Call<T>.handleNetworkCall(): Flow<NetworkResource<T>> {
-    return handler.handleNetworkCall(this)
+fun <T> Call<T>.handleNetworkCall(timeOut: Long = 10000L): Flow<NetworkResource<T>> {
+    return handler.handleNetworkCall(this,timeOut)
 }
 

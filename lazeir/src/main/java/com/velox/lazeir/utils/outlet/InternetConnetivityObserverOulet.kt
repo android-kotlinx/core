@@ -1,7 +1,11 @@
 package com.velox.lazeir.utils.outlet
 
 import android.content.Context
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.lifecycle.MutableLiveData
 import com.velox.lazeir.utils.internetObserver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -42,4 +46,27 @@ fun internetConnectivityListener(
         onLost = onLost,
         context = context
     )
+}
+
+/**
+* it returns a composable function  "Available, Unavailable, Losing, Lost" state on connectivity change in the above functions respectively
+* **/
+@Composable
+@OptIn(ExperimentalCoroutinesApi::class)
+fun InternetConnectivityListener(
+    lifecycleScope: LifecycleCoroutineScope,
+    stateChangeText: MutableLiveData<String>? = null,
+    onAvailable: () -> Unit,
+    onUnAvailable: () -> Unit = {},
+    onLosing: () -> Unit = {},
+    onLost: () -> Unit,
+) {
+    return internetObserver.InternetConnectivityListener(
+        lifecycleScope = lifecycleScope,
+        stateChangeText =stateChangeText ,
+        onAvailable = onAvailable,
+        onUnAvailable = onUnAvailable,
+        onLosing = onLosing,
+        onLost = onLost
+        )
 }

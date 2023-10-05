@@ -182,12 +182,11 @@ class HandlerImpl : HandlerInterface {
 
     @SuppressLint("LogNotTimber")
     override fun <T> handleNetworkCall(call: Call<T>, timeOut: Long): Flow<NetworkResource<T>> {
-        var code: Int?
+        var code = -1
         return flow {
             emit(NetworkResource.Loading(isLoading = true))
             try {
 
-                var code = -1
                 var jsonObject = JSONObject()
 
                 val work = withTimeoutOrNull(timeOut - 10L) {

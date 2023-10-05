@@ -8,12 +8,12 @@ import retrofit2.Response
 
 interface HandlerInterface {
     fun <T, O> handleNetworkResponse(
-        call: suspend () -> Response<T>, mapFun: (it: T) -> O, timeOut: Long = 10000L
+        call: suspend () -> Response<T>, mapFun: (it: T) -> O, timeOut: Long
     ): Flow<NetworkResource<O>>
 
 
     fun <T> handleNetworkResponse(
-        response: Response<T>, timeOut: Long = 10000L
+        response: Response<T>, timeOut: Long
     ): Flow<NetworkResource<T>>
 
 
@@ -27,7 +27,7 @@ interface HandlerInterface {
 
     @SuppressLint("LogNotTimber")
     fun <T> handleNetworkCall(
-        call: Call<T>, timeOut: Long = 10000L
+        call: Call<T>, timeOut: Long
     ): Flow<NetworkResource<T>>
 
 

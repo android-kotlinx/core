@@ -21,7 +21,7 @@ class OuterIntentImpl : OuterIntentInterface {
             intent.setPackage(packageName)
             if (!dataToIntent.isNullOrEmpty()) {
                 for (data in dataToIntent) {
-                    data?.let {da->
+                    data?.let { da ->
                         val (key, value) = da
                         value?.let {
                             when (it) {
@@ -46,7 +46,7 @@ class OuterIntentImpl : OuterIntentInterface {
                                 is ShortArray -> intent.putExtra(key, value as ShortArray)
                                 is Parcelable -> intent.putExtra(key, value as Parcelable)
                                 is Serializable -> intent.putExtra(key, value as Serializable)
-                                else ->{
+                                else -> {
                                     //do nothing
                                 }
                             }
@@ -56,10 +56,9 @@ class OuterIntentImpl : OuterIntentInterface {
                     }
                 }
             }
-        context.startActivity(intent)
-    } catch (e: ActivityNotFoundException)
-    {
-        Toast.makeText(context, "Unable to start $activityName", Toast.LENGTH_SHORT).show()
+            context.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(context, "Unable to start $activityName", Toast.LENGTH_SHORT).show()
+        }
     }
-}
 }
