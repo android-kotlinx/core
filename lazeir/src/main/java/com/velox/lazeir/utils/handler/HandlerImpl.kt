@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.Call
@@ -30,11 +31,11 @@ class HandlerImpl : HandlerInterface {
             try {
 
                 val response = call.invoke()
-                val code = response.code()
                 if (response.isSuccessful) {
                     val data = response.body()?.let { mapFun(it) }
                     emit(NetworkResource.Success(data))
                 } else {
+                    val code = response.code()
                     val errorBody = response.errorBody()!!.string()
                     try {
                         val jObjError = JSONObject(errorBody)
@@ -43,13 +44,16 @@ class HandlerImpl : HandlerInterface {
                         e.message?.let { emit(NetworkResource.Error(it, null, code)) }
                     }
                 }
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.getJSONObject()
+                val code = e.code()
+                val message = e.message()
+                e.message?.let { emit(NetworkResource.Error(message, errorBody, code)) }
             } catch (e: TimeoutException) {
                 e.message?.let { emit(NetworkResource.Error("Time Out")) }
             } catch (e: SocketTimeoutException) {
                 e.message?.let { emit(NetworkResource.Error("Time Out")) }
             } catch (e: IOException) {
-                e.message?.let { emit(NetworkResource.Error(it)) }
-            } catch (e: HttpException) {
                 e.message?.let { emit(NetworkResource.Error(it)) }
             } catch (e: IllegalStateException) {
                 e.message?.let { emit(NetworkResource.Error(it)) }
@@ -62,7 +66,7 @@ class HandlerImpl : HandlerInterface {
             }
             emit(NetworkResource.Loading(false))
 
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
 
@@ -70,10 +74,10 @@ class HandlerImpl : HandlerInterface {
         return flow {
             emit(NetworkResource.Loading(isLoading = true))
             try {
-                val code = response.code()
                 if (response.isSuccessful) {
                     emit(NetworkResource.Success(response.body()))
                 } else {
+                    val code = response.code()
                     val errorBody = response.errorBody()?.string()
                     try {
                         val jObjError = errorBody?.let { JSONObject(it) }
@@ -82,15 +86,18 @@ class HandlerImpl : HandlerInterface {
                         emit(NetworkResource.Error("UNKNOWN ERROR", code = code))
                     }
                 }
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.getJSONObject()
+                val code = e.code()
+                val message = e.message()
+                e.message?.let { emit(NetworkResource.Error(message, errorBody, code)) }
             } catch (e: TimeoutException) {
                 e.message?.let { emit(NetworkResource.Error("Time Out")) }
             } catch (e: SocketTimeoutException) {
                 e.message?.let { emit(NetworkResource.Error("Time Out")) }
             } catch (e: IOException) {
                 e.message?.let { emit(NetworkResource.Error(it)) }
-            } catch (e: HttpException) {
-                e.message?.let { emit(NetworkResource.Error(it)) }
-            } catch (e: IllegalStateException) {
+            }  catch (e: IllegalStateException) {
                 e.message?.let { emit(NetworkResource.Error(it)) }
             } catch (e: NullPointerException) {
                 e.message?.let { emit(NetworkResource.Error(it)) }
@@ -98,10 +105,11 @@ class HandlerImpl : HandlerInterface {
                 e.message?.let { emit(NetworkResource.Error(it)) }
             } catch (e: Exception) {
                 e.message?.let { emit(NetworkResource.Error(it)) }
+            } finally {
+                emit(NetworkResource.Loading(isLoading = false))
             }
             emit(NetworkResource.Loading(isLoading = false))
-
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
 
@@ -159,17 +167,17 @@ class HandlerImpl : HandlerInterface {
                     val message = apiCall.message()
                     emit(NetworkResource.Error(message, errorBody, code))
                 }
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.getJSONObject()
+                code = e.code()
+                val message = e.message()
+                e.message?.let { emit(NetworkResource.Error(message, errorBody, code)) }
             } catch (e: TimeoutException) {
                 e.message?.let { emit(NetworkResource.Error("Time Out")) }
             } catch (e: SocketTimeoutException) {
                 e.message?.let { emit(NetworkResource.Error("Time Out")) }
             } catch (e: IOException) {
                 e.message?.let { emit(NetworkResource.Error(it)) }
-            } catch (e: HttpException) {
-                val errorBody = e.response()?.getJSONObject()
-                code = e.code()
-                val message = e.message()
-                emit(NetworkResource.Error(message, errorBody, code))
             } catch (e: Exception) {
                 e.message?.let { emit(NetworkResource.Error(it)) }
             } catch (e: JsonSyntaxException) {
@@ -177,7 +185,7 @@ class HandlerImpl : HandlerInterface {
             }
             emit(NetworkResource.Loading(isLoading = false))
 
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
 
