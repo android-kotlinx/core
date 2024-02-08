@@ -1,43 +1,48 @@
 package com.velox.lazeir.utils.handler
 
+import ai.heart.lazier.utils.awaitHandler
+import ai.heart.lazier.utils.getJSONObject
 import android.annotation.SuppressLint
+import android.util.Log
 import com.google.gson.JsonSyntaxException
+import io.ktor.client.call.body
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.RedirectResponseException
+import io.ktor.client.plugins.ResponseException
+import io.ktor.client.plugins.ServerResponseException
+import io.ktor.client.statement.HttpResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.JsonObject
+import org.apache.http.conn.ConnectTimeoutException
 import org.json.JSONObject
 import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
+import java.net.SocketTimeoutException
+import java.util.concurrent.TimeoutException
 
 
-
-/*
-*//**
- * [handleNetworkResponse] handle the API response,
- * convert the dto response to domain response
- * extracting the error according to the error code
- * **//*
-fun <T, O> handleNetworkResponse(
-    call: suspend () -> Response<T>, mapFun: (it: T) -> O
+//region RetrofitClient
+ fun <T, O> handleNetworkResponse(
+     call: suspend () -> Response<T>, mapFun: (it: T) -> O
 ): Flow<NetworkResource<O>> {
     return flow {
         emit(NetworkResource.Loading(true))
         try {
+
             val response = call.invoke()
-            val code = response.code()
             if (response.isSuccessful) {
                 val data = response.body()?.let { mapFun(it) }
                 emit(NetworkResource.Success(data))
             } else {
+                val code = response.code()
                 val errorBody = response.errorBody()!!.string()
                 try {
                     val jObjError = JSONObject(errorBody)
@@ -46,9 +51,16 @@ fun <T, O> handleNetworkResponse(
                     e.message?.let { emit(NetworkResource.Error(it, null, code)) }
                 }
             }
-        } catch (e: IOException) {
-            e.message?.let { emit(NetworkResource.Error(it)) }
         } catch (e: HttpException) {
+            val errorBody = e.response()?.getJSONObject()
+            val code = e.code()
+            val message = e.message()
+            e.message?.let { emit(NetworkResource.Error(message, errorBody, code)) }
+        } catch (e: TimeoutException) {
+            e.message?.let { emit(NetworkResource.Error("Time Out")) }
+        } catch (e: SocketTimeoutException) {
+            e.message?.let { emit(NetworkResource.Error("Time Out")) }
+        } catch (e: IOException) {
             e.message?.let { emit(NetworkResource.Error(it)) }
         } catch (e: IllegalStateException) {
             e.message?.let { emit(NetworkResource.Error(it)) }
@@ -60,23 +72,19 @@ fun <T, O> handleNetworkResponse(
             e.message?.let { emit(NetworkResource.Error(it)) }
         }
         emit(NetworkResource.Loading(false))
-    }
+
+    }.flowOn(Dispatchers.IO)
 }
 
 
-*//**
- * [handleNetworkResponse] handle the API response,
- * extracting the error according to the error code
- * **//*
-*//*
-fun <T> handleNetworkResponse(response: Response<T>): Flow<NetworkResource<T>> {
+ fun <T> handleNetworkResponse(response: Response<T>): Flow<NetworkResource<T>> {
     return flow {
         emit(NetworkResource.Loading(isLoading = true))
         try {
-            val code = response.code()
             if (response.isSuccessful) {
                 emit(NetworkResource.Success(response.body()))
             } else {
+                val code = response.code()
                 val errorBody = response.errorBody()?.string()
                 try {
                     val jObjError = errorBody?.let { JSONObject(it) }
@@ -84,46 +92,19 @@ fun <T> handleNetworkResponse(response: Response<T>): Flow<NetworkResource<T>> {
                 } catch (e: Exception) {
                     emit(NetworkResource.Error("UNKNOWN ERROR", code = code))
                 }
-
             }
+        } catch (e: HttpException) {
+            val errorBody = e.response()?.getJSONObject()
+            val code = e.code()
+            val message = e.message()
+            e.message?.let { emit(NetworkResource.Error(message, errorBody, code)) }
+        } catch (e: TimeoutException) {
+            e.message?.let { emit(NetworkResource.Error("Time Out")) }
+        } catch (e: SocketTimeoutException) {
+            e.message?.let { emit(NetworkResource.Error("Time Out")) }
         } catch (e: IOException) {
             e.message?.let { emit(NetworkResource.Error(it)) }
-        } catch (e: HttpException) {
-            e.message?.let { emit(NetworkResource.Error(it)) }
-        } catch (e: IllegalStateException) {
-            e.message?.let { emit(NetworkResource.Error(it)) }
-        } catch (e: NullPointerException) {
-            e.message?.let { emit(NetworkResource.Error(it)) }
-        } catch (e: Exception) {
-            e.message?.let { emit(NetworkResource.Error(it)) }
-        }
-        emit(NetworkResource.Loading(isLoading = false))
-    }
-}
-
-*//*
-
-fun <T> Response<T>.handleNetworkResponse(): Flow<NetworkResource<T>> {
-    return flow {
-        emit(NetworkResource.Loading(isLoading = true))
-        try {
-            val code = this@handleNetworkResponse.code()
-            if (this@handleNetworkResponse.isSuccessful) {
-                emit(NetworkResource.Success(this@handleNetworkResponse.body()))
-            } else {
-                val errorBody = this@handleNetworkResponse.errorBody()?.string()
-                try {
-                    val jObjError = errorBody?.let { JSONObject(it) }
-                    emit(NetworkResource.Error("Network Error", jObjError, code))
-                } catch (e: Exception) {
-                    emit(NetworkResource.Error("UNKNOWN ERROR", code = code))
-                }
-            }
-        } catch (e: IOException) {
-            e.message?.let { emit(NetworkResource.Error(it)) }
-        } catch (e: HttpException) {
-            e.message?.let { emit(NetworkResource.Error(it)) }
-        } catch (e: IllegalStateException) {
+        }  catch (e: IllegalStateException) {
             e.message?.let { emit(NetworkResource.Error(it)) }
         } catch (e: NullPointerException) {
             e.message?.let { emit(NetworkResource.Error(it)) }
@@ -131,76 +112,60 @@ fun <T> Response<T>.handleNetworkResponse(): Flow<NetworkResource<T>> {
             e.message?.let { emit(NetworkResource.Error(it)) }
         } catch (e: Exception) {
             e.message?.let { emit(NetworkResource.Error(it)) }
+        } finally {
+            emit(NetworkResource.Loading(isLoading = false))
         }
         emit(NetworkResource.Loading(isLoading = false))
-    }
+    }.flowOn(Dispatchers.IO)
 }
 
 
-*//**
+/**
  * [handleFlow] takes the response from use case function as Resource<> with in Main Coroutine Scope
  * return the extracted response with in onLoading(),onFailure(),onSuccess()
  * Call within IO Scope
- * **//*
-suspend fun <T> Flow<NetworkResource<T>>.handleFlow(
-    onLoading: suspend (it: Boolean) -> Unit,
-    onFailure: suspend (it: String, errorObject: JSONObject, code: Int) -> Unit,
-    onSuccess: suspend (it: T) -> Unit
+ * **/
+
+@JvmName("handleFlowRetrofit")
+inline fun <T> handleFlow(
+    flow: Flow<NetworkResource<T>>,
+    crossinline onLoading: suspend (it: Boolean) -> Unit,
+    crossinline onFailure: suspend (it: String, errorObject: JSONObject, code: Int) -> Unit,
+    crossinline onSuccess: suspend (it: T) -> Unit
 ) {
-    CoroutineScope(Dispatchers.Main).launch {
-        this@handleFlow.collectLatest {
+    CoroutineScope(Dispatchers.IO).launch {
+        flow.collectLatest {
             when (it) {
                 is NetworkResource.Error -> {
-                    onFailure.invoke(it.message!!, it.errorObject!!, it.code!!)
+                    CoroutineScope(Dispatchers.Main).launch {
+                        onFailure.invoke(it.message!!, it.errorObject!!, it.code!!)
+                    }
                 }
+
                 is NetworkResource.Loading -> {
-                    onLoading.invoke(it.isLoading)
+                    CoroutineScope(Dispatchers.Main).launch {
+                        onLoading.invoke(it.isLoading)
+                    }
                 }
+
                 is NetworkResource.Success -> {
-                    onSuccess.invoke(it.data!!)
+                    CoroutineScope(Dispatchers.Main).launch {
+                        onSuccess.invoke(it.data!!)
+                    }
                 }
             }
         }
     }
 }
-
-
-*//**
- * [awaitHandler]
- * *//*
-*//*suspend fun <T> Call<T>.awaitHandler(): T = suspendCoroutine { continuation ->
-    val callback = object : Callback<T> {
-        override fun onResponse(call: Call<T>, response: Response<T>) {
-            continuation.resumeNormallyOrWithException {
-                response.isSuccessful || throw IllegalStateException("Http error ${response.code()}")
-                response.body() ?: throw IllegalStateException("Response body is null")
-            }
-        }
-
-        override fun onFailure(call: Call<T>, t: Throwable) = continuation.resumeWithException(t)
-    }
-    enqueue(callback)
-}
-
-private inline fun <T> Continuation<T>.resumeNormallyOrWithException(getter: () -> T) = try {
-    val result = getter()
-    resume(result)
-} catch (exception: Throwable) {
-    resumeWithException(exception)
-}
-
-*//*
-
-
 
 
 @SuppressLint("LogNotTimber")
-fun <T> Call<T>.handleNetworkCall(): Flow<NetworkResource<T>> {
+ fun <T> handleNetworkCall(call: Call<T>): Flow<NetworkResource<T>> {
     var code: Int?
     return flow {
         emit(NetworkResource.Loading(isLoading = true))
         try {
-            val apiCall = this@handleNetworkCall.awaitHandler()
+            val apiCall = call.awaitHandler()
             if (apiCall.isSuccessful) {
                 code = apiCall.code()
                 val body = apiCall.body()
@@ -211,44 +176,126 @@ fun <T> Call<T>.handleNetworkCall(): Flow<NetworkResource<T>> {
                 val message = apiCall.message()
                 emit(NetworkResource.Error(message, errorBody, code))
             }
-        } catch (e: IOException) {
-            e.message?.let { emit(NetworkResource.Error(it)) }
         } catch (e: HttpException) {
             val errorBody = e.response()?.getJSONObject()
             code = e.code()
             val message = e.message()
-            emit(NetworkResource.Error(message, errorBody, code))
+            e.message?.let { emit(NetworkResource.Error(message, errorBody, code)) }
+        } catch (e: TimeoutException) {
+            e.message?.let { emit(NetworkResource.Error("Time Out")) }
+        } catch (e: SocketTimeoutException) {
+            e.message?.let { emit(NetworkResource.Error("Time Out")) }
+        } catch (e: IOException) {
+            e.message?.let { emit(NetworkResource.Error(it)) }
         } catch (e: Exception) {
             e.message?.let { emit(NetworkResource.Error(it)) }
-        }catch (e: JsonSyntaxException) {
+        } catch (e: JsonSyntaxException) {
             e.message?.let { emit(NetworkResource.Error(it)) }
         }
         emit(NetworkResource.Loading(isLoading = false))
-    }
-}*/
 
+    }.flowOn(Dispatchers.IO)
+}
 
-//cr velox
+//endregion
 
-internal suspend fun <T> Call<T>.awaitHandler(): Response<T> = suspendCoroutine { continuation ->
-    val callback = object : Callback<T> {
-        override fun onResponse(call: Call<T>, response: Response<T>) {
-            continuation.resume(response)
+//region Ktor
+inline fun <reified T> handleNetworkResponse(crossinline call: suspend () -> HttpResponse): Flow<NetworkResourceKtor<T>> {
+    return flow {
+        emit(NetworkResourceKtor.Loading(isLoading = true))
+        try {
+            val response = call.invoke()
+            Log.i("HandleNetworkResponse", "$response \n ${response.body<T>()}")
+            val status = response.status.value
+            if (status == 200) {
+                emit(NetworkResourceKtor.Success(response.body()))
+            } else {
+                emit(NetworkResourceKtor.Error("Call Exception", response.body(), status))
+            }
+
+        } catch (e: ClientRequestException) {
+            emit(
+                NetworkResourceKtor.Error(
+                    "ClientRequestException",
+                    e.response.body(),
+                    e.response.status.value
+                )
+            )
+        } catch (e: ServerResponseException) {
+            emit(
+                NetworkResourceKtor.Error(
+                    "ServerResponseException",
+                    e.response.body(),
+                    e.response.status.value
+                )
+            )
+        } catch (e: RedirectResponseException) {
+            emit(
+                NetworkResourceKtor.Error(
+                    "RedirectResponseException",
+                    e.response.body(),
+                    e.response.status.value
+                )
+            )
+        } catch (e: ResponseException) {
+            emit(
+                NetworkResourceKtor.Error(
+                    "ResponseException",
+                    e.response.body(),
+                    e.response.status.value
+                )
+            )
+        } catch (e: ConnectTimeoutException) {
+
+            emit(NetworkResourceKtor.Error("Connection Timeout"))
+        } catch (e: SocketTimeoutException) {
+
+            emit(NetworkResourceKtor.Error("Socket Timeout"))
+        } catch (e: IOException) {
+
+            emit(NetworkResourceKtor.Error(e.message ?: "Unknown IO Error"))
+        } catch (e: TimeoutException) {
+            emit(NetworkResourceKtor.Error(e.message ?: "Unknown IO Error"))
+        } catch (e: Exception) {
+            emit(NetworkResourceKtor.Error(e.message ?: "Unknown Error"))
         }
 
-        override fun onFailure(call: Call<T>, t: Throwable) = continuation.resumeWithException(t)
-    }
-    enqueue(callback)
-}
-
-internal fun Response<*>.getJSONObject(): JSONObject? {
-    return try {
-        errorBody()?.string()?.let { JSONObject(it) }
-    } catch (exception: Exception) {
-        null
+        emit(NetworkResourceKtor.Loading(isLoading = false))
     }
 }
 
 
+@JvmName("handleFlowKtor")
+inline fun <T> handleFlow(
+    flow: Flow<NetworkResourceKtor<T>>,
+    crossinline onLoading: suspend (it: Boolean) -> Unit,
+    crossinline onFailure: suspend (it: String, errorObject: JsonObject, code: Int) -> Unit,
+    crossinline onSuccess: suspend (it: T) -> Unit,
+) {
+    CoroutineScope(Dispatchers.IO).launch {
+        flow.collectLatest {
+            when (it) {
+                is NetworkResourceKtor.Error -> {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        onFailure.invoke(it.message!!, it.errorObject!!, it.code!!)
+                    }
+                }
 
+                is NetworkResourceKtor.Loading -> {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        onLoading.invoke(it.isLoading)
+                    }
+                }
+
+                is NetworkResourceKtor.Success -> {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        onSuccess.invoke(it.data!!)
+                    }
+                }
+            }
+        }
+    }
+}
+
+//endregion
 

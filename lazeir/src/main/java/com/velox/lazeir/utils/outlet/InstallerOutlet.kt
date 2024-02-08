@@ -2,20 +2,23 @@ package com.velox.lazeir.utils.outlet
 
 import android.content.Context
 import android.net.Uri
-import com.velox.lazeir.utils.installer
+import android.os.Build
+import androidx.annotation.RequiresApi
+import com.velox.lazeir.utils.installer._unInstallApk
 
 fun installApk(context: Context, uri: Uri, onError: (String) -> Unit={}) {
-    return installer.installApk(context, uri, onError)
+    return installApk(context, uri, onError)
 }
 
 fun installApk(context: Context, fileUri: String, packageName: String, onError: (String) -> Unit={}) {
-    return installer.installApk(context, fileUri, packageName,onError)
+    return installApk(context, fileUri, packageName,onError)
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun unInstallApk(context: Context, packageName: String, onError: (String) -> Unit={}) {
-    installer.unInstallApk(context, packageName, onError)
+    _unInstallApk(context, packageName, onError)
 }
 
 fun isAppInstalled(context: Context, packageName: String): Boolean {
-    return installer.isAppInstalled(context, packageName)
+    return isAppInstalled(context, packageName)
 }

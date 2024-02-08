@@ -5,29 +5,32 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.velox.lazeir.utils.converter
+import com.velox.lazeir.utils.conveter.toBase64
+import com.velox.lazeir.utils.conveter.toBitMapFromBase64
+import com.velox.lazeir.utils.conveter.toDecodedBase64
+import com.velox.lazeir.utils.conveter.toEncodedBase64
 
 
 fun Uri.toByteArray(context: Context): ByteArray? {
-    return  converter.toByteArray(this,context)
+    return  toByteArray(context)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun ByteArray?.toBase64(): String?  {
-    return converter.toBase64(this)
+    return toBase64(this)
 }
 
 
 fun String?.toEncodedBase64(): String? {
-    return converter.toEncodedBase64(this)
+    return toEncodedBase64(this)
 }
 
 
 fun String?.toDecodedBase64(): String? {
-    return converter.toDecodedBase64(this)
+    return toDecodedBase64(this)
 }
 
-fun String?.toBitMapFromBase64(): Bitmap? = converter.toBitMapFromBase64(this)
+fun String?.toBitMapFromBase64(): Bitmap? = toBitMapFromBase64(this)
 
 
 

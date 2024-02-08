@@ -1,4 +1,4 @@
-package com.velox.lazeir.utils
+package ai.heart.lazier
 
 import android.Manifest
 import android.content.Context
