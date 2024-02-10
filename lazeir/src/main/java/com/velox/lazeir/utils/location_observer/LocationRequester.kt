@@ -9,7 +9,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
 
-fun requestLocationEnable(activity: Activity?, result: (Boolean) -> Unit = {}) {
+internal fun requestLocationEnable(activity: Activity?, result: (Boolean) -> Unit = {}) {
 
     activity?.let { act ->
         val locationRequest = LocationRequest.Builder(

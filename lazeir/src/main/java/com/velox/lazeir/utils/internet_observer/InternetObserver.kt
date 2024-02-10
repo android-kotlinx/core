@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @OptIn(ExperimentalCoroutinesApi::class)
-fun internetConnectivityListener(
+internal fun inInternetConnectivityListener(
     lifecycleScope: LifecycleCoroutineScope,
     onAvailable: (it: String) -> Unit,
     onUnAvailable: (it: String) -> Unit,
@@ -32,7 +32,7 @@ fun internetConnectivityListener(
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
-fun InternetConnectivityListener(
+internal fun inInternetConnectivityListener(
     lifecycleScope: LifecycleCoroutineScope,
     stateChangeText: MutableLiveData<String>?,
     onAvailable: () -> Unit,

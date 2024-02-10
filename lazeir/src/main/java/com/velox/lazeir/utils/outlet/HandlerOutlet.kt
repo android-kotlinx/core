@@ -1,21 +1,27 @@
 package com.velox.lazeir.utils.outlet
 
 import android.annotation.SuppressLint
-import com.velox.lazeir.utils.handler
 import com.velox.lazeir.utils.handler.NetworkResource
+import com.velox.lazeir.utils.handler.NetworkResourceKtor
+import com.velox.lazeir.utils.handler.handleFlow
+import com.velox.lazeir.utils.handler.handleFlowKtor
+import com.velox.lazeir.utils.handler.handleNetworkCall
+import com.velox.lazeir.utils.handler.handleNetworkResponse
+import io.ktor.client.statement.HttpResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.JsonObject
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
 
 
 fun <T, O> handleNetworkResponse(
-    call: suspend () -> Response<T>,timeOut: Long = 10000L, mapFun: (it: T) -> O
+    call: suspend () -> Response<T>, mapFun: (it: T) -> O
 ): Flow<NetworkResource<O>> {
-    return handler.handleNetworkResponse(call, mapFun, timeOut)
+    return handleNetworkResponse(call, mapFun)
 }
 
 /**
@@ -34,8 +40,8 @@ fun <T, O> handleNetworkResponse(
  *      }
  *
  * */
-fun <T> Response<T>.handleNetworkResponse(timeOut: Long = 10000L): Flow<NetworkResource<T>> {
-    return handler.handleNetworkResponse(this,  timeOut)
+fun <T> Response<T>.handleNetworkResponse(): Flow<NetworkResource<T>> {
+    return handleNetworkResponse(this)
 }
 
 
@@ -44,27 +50,41 @@ fun <T> Response<T>.handleNetworkResponse(timeOut: Long = 10000L): Flow<NetworkR
  * return the extracted response with in onLoading(),onFailure(),onSuccess()
  * Call within IO Scope
  * **/
-suspend fun <T> Flow<NetworkResource<T>>.handleFlow(
+fun <T> Flow<NetworkResource<T>>.handleFlow(
     onLoading: suspend (it: Boolean) -> Unit,
     onFailure: suspend (it: String, errorObject: JSONObject, code: Int) -> Unit,
     onSuccess: suspend (it: T) -> Unit
 ) {
-    return handler.handleFlow(this, onLoading, onFailure, onSuccess)
+    return handleFlow(this, onLoading, onFailure, onSuccess)
 }
 
-suspend fun <T> Flow<NetworkResource<T>>.handleFlowWithScope(
+fun <T> Flow<NetworkResource<T>>.handleFlowWithScope(
     onLoading: suspend (it: Boolean) -> Unit,
     onFailure: suspend (it: String, errorObject: JSONObject, code: Int) -> Unit,
     onSuccess: suspend (it: T) -> Unit
 ) {
-     CoroutineScope(Dispatchers.IO).launch {
-        return@launch handler.handleFlow(this@handleFlowWithScope, onLoading, onFailure, onSuccess)
+    CoroutineScope(Dispatchers.IO).launch {
+        return@launch handleFlow(this@handleFlowWithScope, onLoading, onFailure, onSuccess)
     }
 }
 
 
 @SuppressLint("LogNotTimber")
-fun <T> Call<T>.handleNetworkCall(timeOut: Long = 10000L): Flow<NetworkResource<T>> {
-    return handler.handleNetworkCall(this,timeOut)
+fun <T> Call<T>.handleNetworkCall(): Flow<NetworkResource<T>> {
+    return handleNetworkCall(this)
 }
 
+
+inline fun <reified T> handleNetworkResponse(crossinline call: suspend () -> HttpResponse): Flow<NetworkResourceKtor<T>> {
+    return handleNetworkResponse(call)
+}
+
+
+@JvmName("handleFlowKtor")
+fun <T> Flow<NetworkResourceKtor<T>>.handleFlow(
+    onLoading: suspend (it: Boolean) -> Unit,
+    onFailure: suspend (it: String, errorObject: JsonObject, code: Int) -> Unit,
+    onSuccess: suspend (it: T) -> Unit
+) {
+    return handleFlowKtor(this, onLoading, onFailure, onSuccess)
+}

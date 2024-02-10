@@ -276,8 +276,8 @@ val mainScope = CoroutineScope(Dispatchers.Main)
 
 internal fun CharSequence?.isNotNullOrEmpty(): Boolean = !this@isNotNullOrEmpty.isNullOrEmpty()
 
-val units = arrayOf("", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine")
-val teens = arrayOf(
+internal val units = arrayOf("", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine")
+internal val teens = arrayOf(
     "Ten",
     "Eleven",
     "Twelve",
@@ -289,7 +289,7 @@ val teens = arrayOf(
     "Eighteen",
     "Nineteen"
 )
-val tens =
+internal val tens =
     arrayOf("", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety")
 
 internal fun convertToWords(amount: Double): String {

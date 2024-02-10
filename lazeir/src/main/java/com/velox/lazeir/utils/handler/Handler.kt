@@ -1,7 +1,7 @@
 package com.velox.lazeir.utils.handler
 
-import ai.heart.lazier.utils.awaitHandler
-import ai.heart.lazier.utils.getJSONObject
+import com.velox.lazeir.utils.awaitHandler
+import com.velox.lazeir.utils.getJSONObject
 import android.annotation.SuppressLint
 import android.util.Log
 import com.google.gson.JsonSyntaxException
@@ -30,7 +30,7 @@ import java.util.concurrent.TimeoutException
 
 
 //region RetrofitClient
- fun <T, O> handleNetworkResponse(
+internal fun <T, O> handleNetworkResponse(
      call: suspend () -> Response<T>, mapFun: (it: T) -> O
 ): Flow<NetworkResource<O>> {
     return flow {
@@ -77,7 +77,7 @@ import java.util.concurrent.TimeoutException
 }
 
 
- fun <T> handleNetworkResponse(response: Response<T>): Flow<NetworkResource<T>> {
+ internal fun <T> handleNetworkResponse(response: Response<T>): Flow<NetworkResource<T>> {
     return flow {
         emit(NetworkResource.Loading(isLoading = true))
         try {
@@ -127,7 +127,7 @@ import java.util.concurrent.TimeoutException
  * **/
 
 @JvmName("handleFlowRetrofit")
-inline fun <T> handleFlow(
+internal inline fun <T> handleFlow(
     flow: Flow<NetworkResource<T>>,
     crossinline onLoading: suspend (it: Boolean) -> Unit,
     crossinline onFailure: suspend (it: String, errorObject: JSONObject, code: Int) -> Unit,
@@ -160,7 +160,7 @@ inline fun <T> handleFlow(
 
 
 @SuppressLint("LogNotTimber")
- fun <T> handleNetworkCall(call: Call<T>): Flow<NetworkResource<T>> {
+internal fun <T> handleNetworkCall(call: Call<T>): Flow<NetworkResource<T>> {
     var code: Int?
     return flow {
         emit(NetworkResource.Loading(isLoading = true))
@@ -200,7 +200,7 @@ inline fun <T> handleFlow(
 //endregion
 
 //region Ktor
-inline fun <reified T> handleNetworkResponse(crossinline call: suspend () -> HttpResponse): Flow<NetworkResourceKtor<T>> {
+ inline fun <reified T> handleNetworkResponse(crossinline call: suspend () -> HttpResponse): Flow<NetworkResourceKtor<T>> {
     return flow {
         emit(NetworkResourceKtor.Loading(isLoading = true))
         try {
@@ -266,7 +266,7 @@ inline fun <reified T> handleNetworkResponse(crossinline call: suspend () -> Htt
 
 
 @JvmName("handleFlowKtor")
-inline fun <T> handleFlow(
+internal inline fun <T> handleFlowKtor(
     flow: Flow<NetworkResourceKtor<T>>,
     crossinline onLoading: suspend (it: Boolean) -> Unit,
     crossinline onFailure: suspend (it: String, errorObject: JsonObject, code: Int) -> Unit,

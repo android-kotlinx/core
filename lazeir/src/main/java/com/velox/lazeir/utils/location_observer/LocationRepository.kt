@@ -1,6 +1,6 @@
 package com.velox.lazeir.utils.location_observer
 
-import ai.heart.lazier.hasLocationPermission
+import com.velox.lazeir.hasLocationPermission
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
@@ -17,7 +17,7 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import kotlinx.coroutines.tasks.await
 
 
-class LocationRepository  {
+internal class LocationRepository  {
 
     val isGpsEnabled = mutableStateOf(false)
     fun requestLocationEnabler(activity: Activity?, result: (Boolean) -> Unit) {
@@ -29,7 +29,7 @@ class LocationRepository  {
 
 
 
-    fun isGpsEnabled(context: Context): Boolean {
+    private fun checkIsGpsEnabled(context: Context): Boolean {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
@@ -57,7 +57,7 @@ class LocationRepository  {
     @SuppressLint("MissingPermission")
     suspend fun getCurrentLocation(context: Context, priority: Int): CurrentLocationData? {
         if (context.hasLocationPermission()) {
-            if (isGpsEnabled(context)) {
+            if (checkIsGpsEnabled(context)) {
                 val locationClient = LocationServices.getFusedLocationProviderClient(context)
                 val result = locationClient.getCurrentLocation(priority, CancellationTokenSource().token)
                         .await()

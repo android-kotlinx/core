@@ -9,7 +9,7 @@ import android.widget.Toast
 import java.io.Serializable
 
 
-fun <T> startActivity(
+fun <T> inStartActivity(
     context: Context,
     packageName: String,
     activityName: String,

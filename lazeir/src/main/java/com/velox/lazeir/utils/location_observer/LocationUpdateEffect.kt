@@ -26,7 +26,7 @@ import com.google.android.gms.location.LocationServices
     anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION],
 )
 @Composable
-fun LocationUpdatesEffect(
+internal fun LocationUpdatesEffect(
     locationRequest: LocationRequest,
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
     onUpdate: (result: LocationResult) -> Unit,

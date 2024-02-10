@@ -1,4 +1,4 @@
-package ai.heart.lazier.permission
+package com.velox.lazeir.utils.permission
 
 import android.app.Activity
 import android.content.pm.PackageManager

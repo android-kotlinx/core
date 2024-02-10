@@ -11,7 +11,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 
 @SuppressLint("QueryPermissionsNeeded")
- fun installApk(context: Context, uri: Uri, onError: (String) -> Unit) {
+ internal fun inInstallApk(context: Context, uri: Uri, onError: (String) -> Unit) {
     try {
         val packageInstallPermission = Manifest.permission.REQUEST_INSTALL_PACKAGES
         val permissionStatus =
@@ -50,7 +50,7 @@ import androidx.core.content.ContextCompat
 }
 
 
- fun installApk(
+internal fun inInstallApk(
      context: Context,
      fileUri: String,
      packageName: String,
@@ -65,7 +65,7 @@ import androidx.core.content.ContextCompat
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
- fun _unInstallApk(context: Context, packageName: String, onError: (String) -> Unit) {
+internal fun inUninstallApk(context: Context, packageName: String, onError: (String) -> Unit) {
     val packageInstallPermission = Manifest.permission.REQUEST_DELETE_PACKAGES
     val permissionStatus = ContextCompat.checkSelfPermission(context, packageInstallPermission)
 
@@ -89,7 +89,7 @@ import androidx.core.content.ContextCompat
 }
 
 
- fun isAppInstalled(context: Context, packageName: String): Boolean {
+internal fun inIsAppInstalled(context: Context, packageName: String): Boolean {
     val packageManager = context.packageManager
     return try {
         packageManager.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES)
