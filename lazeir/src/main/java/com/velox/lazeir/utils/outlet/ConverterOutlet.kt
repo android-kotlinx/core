@@ -6,6 +6,8 @@ import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.velox.lazeir.utils.conveter.cropCenter
+import com.velox.lazeir.utils.conveter.inConvertMillisToDate
+import com.velox.lazeir.utils.conveter.inConvertToWords
 import com.velox.lazeir.utils.conveter.toBase64
 import com.velox.lazeir.utils.conveter.toBitMapFromBase64
 import com.velox.lazeir.utils.conveter.toByteArray
@@ -65,6 +67,8 @@ fun <T : Number> T.toSevenDigits(): T = toSevenDigits(this)
  * */
 fun Number.toTime(): String = toTime(this)
 
+fun convertMillisToDate(millis: Long?, pattern: String): String = inConvertMillisToDate(millis, pattern)
 
 
+ fun convertToWords(amount: Double): String = inConvertToWords(amount)
 

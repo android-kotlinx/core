@@ -6,6 +6,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.provider.Settings
@@ -23,13 +25,14 @@ internal class LocationRepository  {
     fun requestLocationEnabler(activity: Activity?, result: (Boolean) -> Unit) {
         requestLocationEnable(activity, result)
     }
+    private lateinit var locationManager: LocationManager
 
     private val gpsStateReceiver = GpsConnectivityObserver(isGpsEnabled)
     private val isLocationReceiverRegistered = mutableStateOf(false)
 
 
 
-    private fun checkIsGpsEnabled(context: Context): Boolean {
+    fun inIsGpsHardwareEnabled(context: Context): Boolean {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
@@ -57,7 +60,7 @@ internal class LocationRepository  {
     @SuppressLint("MissingPermission")
     suspend fun getCurrentLocation(context: Context, priority: Int): CurrentLocationData? {
         if (context.hasLocationPermission()) {
-            if (checkIsGpsEnabled(context)) {
+            if (inIsGpsHardwareEnabled(context)) {
                 val locationClient = LocationServices.getFusedLocationProviderClient(context)
                 val result = locationClient.getCurrentLocation(priority, CancellationTokenSource().token)
                         .await()
@@ -78,7 +81,85 @@ internal class LocationRepository  {
             return null
         }
     }
+
+    @SuppressLint("MissingPermission")
+    internal fun getLocation(
+        context: Context, onResult: (CurrentLocationData?) -> Unit,
+        onFailure: (String) -> Unit,
+        onGpsEnabled: (String) -> Unit = {},
+        onGpsDisabled: (String) -> Unit = {},
+        getLocationOnes: Boolean,
+                                ) :LocationListener ? {
+        locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+        if ( inIsGpsHardwareEnabled(context)) {
+            val locationListener = object : LocationListener {
+                override fun onLocationChanged(location: Location) {
+                    // Handle the new location
+                    val currentLocationData = CurrentLocationData(
+                        lat = location.latitude.toString(),
+                        long = location.longitude.toString(),
+                        alt = location.altitude.toString(),
+                        bearing = location.bearing.toString(),
+                        accuracy = location.accuracy,
+                        verticalAccuracy = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            location.verticalAccuracyMeters
+                        } else {
+                            null
+                        }
+                    )
+
+                    // Do something with the currentLocationData
+                    onResult(currentLocationData)
+
+                    // Stop location updates after receiving the first location
+                    if (getLocationOnes){
+                        locationManager.removeUpdates(this)
+                    }
+                }
+
+                override fun onProviderEnabled(provider: String) {
+                    super.onProviderEnabled(provider)
+                    onGpsEnabled(provider)
+                }
+
+                override fun onProviderDisabled(provider: String) {
+                    super.onProviderDisabled(provider)
+                    onGpsDisabled(provider)
+                }
+            }
+
+            if (getLocationOnes){
+
+                locationManager.requestSingleUpdate(
+                    LocationManager.GPS_PROVIDER,
+                    locationListener,
+                    null
+                )
+            }else{
+                locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    0,
+                    0f,
+                    locationListener
+                )
+            }
+
+
+            return locationListener
+        } else {
+            onResult(null)
+            onFailure("Please Turn On GPS")
+            return null
+        }
+    }
+    internal fun removeGpsListener(listener: LocationListener){
+        locationManager.removeUpdates(listener)
+    }
+
 }
+
+
 
 @Keep
 data class CurrentLocationData(

@@ -292,7 +292,7 @@ internal val teens = arrayOf(
 internal val tens =
     arrayOf("", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety")
 
-internal fun convertToWords(amount: Double): String {
+internal fun inConvertToWords(amount: Double): String {
     if (amount == 0.0) {
         return "Zero Rupees"
     }
@@ -346,7 +346,7 @@ internal fun convertAmount(amount: Double): String {
 
 
 @SuppressLint("SimpleDateFormat")
-internal fun convertMillisToDate(millis: Long?, pattern: String): String {
+internal fun inConvertMillisToDate(millis: Long?, pattern: String): String {
     return if (millis != null) {
         val dateFormat = SimpleDateFormat(pattern)
         val date = Date(millis)
