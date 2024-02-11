@@ -1,8 +1,8 @@
 package com.velox.lazeir.utils.outlet
 
 import android.annotation.SuppressLint
-import com.velox.lazeir.utils.handler.NetworkResource
-import com.velox.lazeir.utils.handler.NetworkResourceKtor
+import com.velox.lazeir.utils.handler.RetrofitResource
+import com.velox.lazeir.utils.handler.KtorResource
 import com.velox.lazeir.utils.handler.handleFlow
 import com.velox.lazeir.utils.handler.handleFlowKtor
 import com.velox.lazeir.utils.handler.handleNetworkCall
@@ -20,7 +20,7 @@ import retrofit2.Response
 
 fun <T, O> handleNetworkResponse(
     call: suspend () -> Response<T>, mapFun: (it: T) -> O
-): Flow<NetworkResource<O>> {
+): Flow<RetrofitResource<O>> {
     return handleNetworkResponse(call, mapFun)
 }
 
@@ -40,7 +40,7 @@ fun <T, O> handleNetworkResponse(
  *      }
  *
  * */
-fun <T> Response<T>.handleNetworkResponse(): Flow<NetworkResource<T>> {
+fun <T> Response<T>.handleNetworkResponse(): Flow<RetrofitResource<T>> {
     return handleNetworkResponse(this)
 }
 
@@ -50,7 +50,7 @@ fun <T> Response<T>.handleNetworkResponse(): Flow<NetworkResource<T>> {
  * return the extracted response with in onLoading(),onFailure(),onSuccess()
  * Call within IO Scope
  * **/
-fun <T> Flow<NetworkResource<T>>.handleFlow(
+fun <T> Flow<RetrofitResource<T>>.handleFlow(
     onLoading: suspend (it: Boolean) -> Unit,
     onFailure: suspend (it: String, errorObject: JSONObject, code: Int) -> Unit,
     onSuccess: suspend (it: T) -> Unit
@@ -58,7 +58,7 @@ fun <T> Flow<NetworkResource<T>>.handleFlow(
     return handleFlow(this, onLoading, onFailure, onSuccess)
 }
 
-fun <T> Flow<NetworkResource<T>>.handleFlowWithScope(
+fun <T> Flow<RetrofitResource<T>>.handleFlowWithScope(
     onLoading: suspend (it: Boolean) -> Unit,
     onFailure: suspend (it: String, errorObject: JSONObject, code: Int) -> Unit,
     onSuccess: suspend (it: T) -> Unit
@@ -70,18 +70,17 @@ fun <T> Flow<NetworkResource<T>>.handleFlowWithScope(
 
 
 @SuppressLint("LogNotTimber")
-fun <T> Call<T>.handleNetworkCall(): Flow<NetworkResource<T>> {
+fun <T> Call<T>.handleNetworkCall(): Flow<RetrofitResource<T>> {
     return handleNetworkCall(this)
 }
 
 
-inline fun <reified T> handleNetworkResponse(crossinline call: suspend () -> HttpResponse): Flow<NetworkResourceKtor<T>> {
+inline fun <reified T> handleNetworkResponse(crossinline call: suspend () -> HttpResponse): Flow<KtorResource<T>> {
     return handleNetworkResponse(call)
 }
 
 
-@JvmName("handleFlowKtor")
-fun <T> Flow<NetworkResourceKtor<T>>.handleFlow(
+fun <T> Flow<KtorResource<T>>.handleKtorFlow(
     onLoading: suspend (it: Boolean) -> Unit,
     onFailure: suspend (it: String, errorObject: JsonObject, code: Int) -> Unit,
     onSuccess: suspend (it: T) -> Unit

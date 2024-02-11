@@ -8,20 +8,26 @@ import org.json.JSONObject
  * Author: [cr velox]
  * */
 
-typealias NetworkResourceRetrofit<T> = NetworkResource<T>
 
-sealed class NetworkResource<T>(
+
+@Deprecated("use KtorResource instead",)
+typealias NetworkResourceKtor<T> = KtorResource<T>
+
+@Deprecated("use RetrofitResource instead",)
+typealias NetworkResource<T> = RetrofitResource<T>
+
+sealed class RetrofitResource<T>(
     val data: T? = null,
     val message: String? = null,
     val errorObject: JSONObject? = null,
     val code: Int? = null
 ) {
-    class Success<T>(data: T?) : NetworkResource<T>(data)
+    class Success<T>(data: T?) : RetrofitResource<T>(data)
 
     class Error<T>(message: String, errorObject: JSONObject? = JSONObject(), code: Int? = -100) :
-        NetworkResource<T>(null, message, errorObject, code)
+        RetrofitResource<T>(null, message, errorObject, code)
 
-    class Loading<T>(val isLoading: Boolean) : NetworkResource<T>(null)
+    class Loading<T>(val isLoading: Boolean) : RetrofitResource<T>(null)
 
 }
 sealed class NetworkResultResource<T>(
@@ -39,17 +45,17 @@ sealed class NetworkResultResource<T>(
 
 }
 
-sealed class NetworkResourceKtor<T>(
+sealed class KtorResource<T>(
     val data: T? = null,
     val message: String? = null,
     val errorObject: JsonObject? = null,
     val code: Int? = null
 ) {
-    class Success<T>(data: T?) : NetworkResourceKtor<T>(data)
+    class Success<T>(data: T?) : KtorResource<T>(data)
 
     class Error<T>(message: String, errorObject: JsonObject? = null, code: Int? = -100) :
-        NetworkResourceKtor<T>(null, message, errorObject, code)
+        KtorResource<T>(null, message, errorObject, code)
 
-    class Loading<T>(val isLoading: Boolean) : NetworkResourceKtor<T>(null)
+    class Loading<T>(val isLoading: Boolean) : KtorResource<T>(null)
 
 }
