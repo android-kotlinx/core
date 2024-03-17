@@ -1,7 +1,7 @@
 package com.velox.lazeir.utils.outlet
 
 import android.content.Context
-import com.velox.lazeir.utils.outerIntent
+import com.velox.lazeir.utils.outerintent.inStartActivity
 
 
 /**
@@ -14,7 +14,6 @@ import com.velox.lazeir.utils.outerIntent
  * In child application manifest add the following code inside the
  *
  * < queries>
- *
  * **< package android:name="com.example.package"/>**
  *
  * < /queries>
@@ -34,6 +33,10 @@ import com.velox.lazeir.utils.outerIntent
  * remember to add  **implementation 'androidx.work:work-runtime-ktx:TAG'**
 
  * */
-fun <T> Context.startOuterActivity(packageName: String, activityName: String,dataToIntent:List<Pair<String,T?>?>?) {
-    outerIntent.startActivity(this, packageName, activityName,dataToIntent)
+fun <T> Context.startOuterActivity(
+    packageName: String,
+    activityName: String,
+    dataToIntent: List<Pair<String, T?>?>?
+) {
+    inStartActivity(this, packageName, activityName, dataToIntent)
 }

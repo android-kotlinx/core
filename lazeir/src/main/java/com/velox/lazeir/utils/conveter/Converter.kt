@@ -1,34 +1,32 @@
-package com.velox.lazeir.utils.conveter/*
-package com.velox.lazeir.utils
+package com.velox.lazeir.utils.conveter
 
-import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ContentResolver
 import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.util.Base64
+import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 
-*/
-/**
- * [toByteArray] Converting Uri to ByteArray
- * *//*
-
 @SuppressLint("Recycle")
-fun Uri.toByteArray(context: Context): ByteArray? {
-    val iStream = context.contentResolver.openInputStream(this)
+internal fun toByteArray(uri: Uri, context: Context): ByteArray? {
+    val iStream = context.contentResolver.openInputStream(uri)
     val byteBuffer = ByteArrayOutputStream()
     val bufferSize = 1024
     val buffer = ByteArray(bufferSize)
@@ -44,15 +42,15 @@ fun Uri.toByteArray(context: Context): ByteArray? {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun ByteArray?.toBase64(): String? = try {
-    String(java.util.Base64.getEncoder().encode(this))
+internal fun toBase64(byteArray: ByteArray?): String? = try {
+    String(java.util.Base64.getEncoder().encode(byteArray))
 } catch (e: Exception) {
     null
 }
 
 
-fun String?.toEncodedBase64(): String? = try {
-    val bytes = this?.toByteArray(Charsets.UTF_8)
+internal fun toEncodedBase64(string: String?): String? = try {
+    val bytes = string?.toByteArray(Charsets.UTF_8)
     Base64.encodeToString(bytes, Base64.DEFAULT)
 
 } catch (e: Exception) {
@@ -60,44 +58,42 @@ fun String?.toEncodedBase64(): String? = try {
 }
 
 
-fun String?.toDecodedBase64(): String? =try {
-        val bytes = this.let { Base64.decode(this, Base64.DEFAULT) }
-        String(bytes, Charsets.UTF_8)
-    } catch (e: Exception) {
-        null
-    }
+internal fun toDecodedBase64(string: String?): String? = try {
+    val bytes = string.let { Base64.decode(it, Base64.DEFAULT) }
+    String(bytes, Charsets.UTF_8)
+} catch (e: Exception) {
+    null
+}
 
-fun String?.toBitMapFromBase64(): Bitmap? = try {
-        val decodedBytes = Base64.decode(this, Base64.DEFAULT)
-        BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-    } catch (e: Exception) {
-        null
-    }
+internal fun toBitMapFromBase64(string: String?): Bitmap? = try {
+    val decodedBytes = Base64.decode(string, Base64.DEFAULT)
+    BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+} catch (e: Exception) {
+    null
+}
 
 
-
-fun Bitmap?.cropCenter(): Bitmap? {
+internal fun cropCenter(bitmap: Bitmap?): Bitmap? {
     return try {
-        val centerX = (this?.width ?: 0) / 2
-        val centerY = (this?.height ?: 0) / 2
+        val centerX = (bitmap?.width ?: 0) / 2
+        val centerY = (bitmap?.height ?: 0) / 2
         val width = 200
         val height = 200
         val left = centerX - (width / 2)
         val top = centerY - (height / 2)
-        val right = centerX + (width / 2)
-        val bottom = centerY + (height / 2)
-        val croppedBitmap = Bitmap.createBitmap(this!!, left, top, width, height)
+//            val right = centerX + (width / 2)
+//            val bottom = centerY + (height / 2)
+        val croppedBitmap = Bitmap.createBitmap(bitmap!!, left, top, width, height)
         croppedBitmap
     } catch (e: Exception) {
         null
     }
-
 }
 
-fun Bitmap?.toByteArray(): ByteArray? {
+internal fun toByteArray(bitmap: Bitmap?): ByteArray? {
     try {
         ByteArrayOutputStream().use { stream ->
-            this?.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, stream)
             return stream.toByteArray()
         }
     } catch (e: Exception) {
@@ -106,101 +102,10 @@ fun Bitmap?.toByteArray(): ByteArray? {
 }
 
 
-fun <T : Number> T.toWholeNumber(): T {
-    val formattedNumber = DecimalFormat("00000").format(this).toDouble()
+internal fun <T : Number> toWholeNumber(number: T): T {
+    val formattedNumber = DecimalFormat("00000").format(number).toDouble()
     @Suppress("UNCHECKED_CAST")
-    return when (this) {
-        is Byte -> formattedNumber.toInt().toByte() as T
-        is Short -> formattedNumber.toInt().toShort() as T
-        is Int -> formattedNumber.toInt() as T
-        is Long -> formattedNumber.toLong() as T
-        is Float -> formattedNumber.toFloat() as T
-        is Double -> formattedNumber as T
-        else -> throw IllegalArgumentException("Unsupported number type")
-    }
-}
-fun <T : Number> T.toOneDigits(): T {
-    val formattedNumber = DecimalFormat("00000.0").format(this).toDouble()
-    @Suppress("UNCHECKED_CAST")
-    return when (this) {
-        is Byte -> formattedNumber.toInt().toByte() as T
-        is Short -> formattedNumber.toInt().toShort() as T
-        is Int -> formattedNumber.toInt() as T
-        is Long -> formattedNumber.toLong() as T
-        is Float -> formattedNumber.toFloat() as T
-        is Double -> formattedNumber as T
-        else -> throw IllegalArgumentException("Unsupported number type")
-    }
-}
-fun <T : Number> T.toTwoDigits(): T {
-    val formattedNumber = DecimalFormat("00000.00").format(this).toDouble()
-    @Suppress("UNCHECKED_CAST")
-    return when (this) {
-        is Byte -> formattedNumber.toInt().toByte() as T
-        is Short -> formattedNumber.toInt().toShort() as T
-        is Int -> formattedNumber.toInt() as T
-        is Long -> formattedNumber.toLong() as T
-        is Float -> formattedNumber.toFloat() as T
-        is Double -> formattedNumber as T
-        else -> throw IllegalArgumentException("Unsupported number type")
-    }
-}
-fun <T : Number> T.toThreeDigits(): T {
-    val formattedNumber = DecimalFormat("00000.000").format(this).toDouble()
-    @Suppress("UNCHECKED_CAST")
-    return when (this) {
-        is Byte -> formattedNumber.toInt().toByte() as T
-        is Short -> formattedNumber.toInt().toShort() as T
-        is Int -> formattedNumber.toInt() as T
-        is Long -> formattedNumber.toLong() as T
-        is Float -> formattedNumber.toFloat() as T
-        is Double -> formattedNumber as T
-        else -> throw IllegalArgumentException("Unsupported number type")
-    }
-}
-fun <T : Number> T.toFourDigits(): T {
-    val formattedNumber = DecimalFormat("00000.0000").format(this).toDouble()
-    @Suppress("UNCHECKED_CAST")
-    return when (this) {
-        is Byte -> formattedNumber.toInt().toByte() as T
-        is Short -> formattedNumber.toInt().toShort() as T
-        is Int -> formattedNumber.toInt() as T
-        is Long -> formattedNumber.toLong() as T
-        is Float -> formattedNumber.toFloat() as T
-        is Double -> formattedNumber as T
-        else -> throw IllegalArgumentException("Unsupported number type")
-    }
-}
-fun <T : Number> T.toFiveDigits(): T {
-    val formattedNumber = DecimalFormat("00000.00000").format(this).toDouble()
-    @Suppress("UNCHECKED_CAST")
-    return when (this) {
-        is Byte -> formattedNumber.toInt().toByte() as T
-        is Short -> formattedNumber.toInt().toShort() as T
-        is Int -> formattedNumber.toInt() as T
-        is Long -> formattedNumber.toLong() as T
-        is Float -> formattedNumber.toFloat() as T
-        is Double -> formattedNumber as T
-        else -> throw IllegalArgumentException("Unsupported number type")
-    }
-}
-fun <T : Number> T.toSixDigits(): T {
-    val formattedNumber = DecimalFormat("00000.000000").format(this).toDouble()
-    @Suppress("UNCHECKED_CAST")
-    return when (this) {
-        is Byte -> formattedNumber.toInt().toByte() as T
-        is Short -> formattedNumber.toInt().toShort() as T
-        is Int -> formattedNumber.toInt() as T
-        is Long -> formattedNumber.toLong() as T
-        is Float -> formattedNumber.toFloat() as T
-        is Double -> formattedNumber as T
-        else -> throw IllegalArgumentException("Unsupported number type")
-    }
-}
-fun <T : Number> T.toSevenDigits(): T {
-    val formattedNumber = DecimalFormat("00000.0000000").format(this).toDouble()
-    @Suppress("UNCHECKED_CAST")
-    return when (this) {
+    return when (number) {
         is Byte -> formattedNumber.toInt().toByte() as T
         is Short -> formattedNumber.toInt().toShort() as T
         is Int -> formattedNumber.toInt() as T
@@ -211,56 +116,245 @@ fun <T : Number> T.toSevenDigits(): T {
     }
 }
 
-*/
-/**
- * Converts any number to "HH:mm:ss:SS" format string
- * *//*
+internal fun <T : Number> toOneDigits(number: T): T {
+    val formattedNumber = DecimalFormat("00000.0").format(number).toDouble()
+    @Suppress("UNCHECKED_CAST")
+    return when (number) {
+        is Byte -> formattedNumber.toInt().toByte() as T
+        is Short -> formattedNumber.toInt().toShort() as T
+        is Int -> formattedNumber.toInt() as T
+        is Long -> formattedNumber.toLong() as T
+        is Float -> formattedNumber.toFloat() as T
+        is Double -> formattedNumber as T
+        else -> throw IllegalArgumentException("Unsupported number type")
+    }
+}
 
-fun Number.toTime(): String {
+internal fun <T : Number> toTwoDigits(number: T): T {
+    val formattedNumber = DecimalFormat("00000.00").format(number).toDouble()
+    @Suppress("UNCHECKED_CAST")
+    return when (number) {
+        is Byte -> formattedNumber.toInt().toByte() as T
+        is Short -> formattedNumber.toInt().toShort() as T
+        is Int -> formattedNumber.toInt() as T
+        is Long -> formattedNumber.toLong() as T
+        is Float -> formattedNumber.toFloat() as T
+        is Double -> formattedNumber as T
+        else -> throw IllegalArgumentException("Unsupported number type")
+    }
+}
+
+internal fun <T : Number> toThreeDigits(number: T): T {
+    val formattedNumber = DecimalFormat("00000.000").format(number).toDouble()
+    @Suppress("UNCHECKED_CAST")
+    return when (number) {
+        is Byte -> formattedNumber.toInt().toByte() as T
+        is Short -> formattedNumber.toInt().toShort() as T
+        is Int -> formattedNumber.toInt() as T
+        is Long -> formattedNumber.toLong() as T
+        is Float -> formattedNumber.toFloat() as T
+        is Double -> formattedNumber as T
+        else -> throw IllegalArgumentException("Unsupported number type")
+    }
+}
+
+internal fun <T : Number> toFourDigits(number: T): T {
+    val formattedNumber = DecimalFormat("00000.0000").format(number).toDouble()
+    @Suppress("UNCHECKED_CAST")
+    return when (number) {
+        is Byte -> formattedNumber.toInt().toByte() as T
+        is Short -> formattedNumber.toInt().toShort() as T
+        is Int -> formattedNumber.toInt() as T
+        is Long -> formattedNumber.toLong() as T
+        is Float -> formattedNumber.toFloat() as T
+        is Double -> formattedNumber as T
+        else -> throw IllegalArgumentException("Unsupported number type")
+    }
+}
+
+internal fun <T : Number> toFiveDigits(number: T): T {
+    val formattedNumber = DecimalFormat("00000.00000").format(number).toDouble()
+    @Suppress("UNCHECKED_CAST")
+    return when (number) {
+        is Byte -> formattedNumber.toInt().toByte() as T
+        is Short -> formattedNumber.toInt().toShort() as T
+        is Int -> formattedNumber.toInt() as T
+        is Long -> formattedNumber.toLong() as T
+        is Float -> formattedNumber.toFloat() as T
+        is Double -> formattedNumber as T
+        else -> throw IllegalArgumentException("Unsupported number type")
+    }
+}
+
+internal fun <T : Number> toSixDigits(number: T): T {
+    val formattedNumber = DecimalFormat("00000.000000").format(number).toDouble()
+    @Suppress("UNCHECKED_CAST")
+    return when (number) {
+        is Byte -> formattedNumber.toInt().toByte() as T
+        is Short -> formattedNumber.toInt().toShort() as T
+        is Int -> formattedNumber.toInt() as T
+        is Long -> formattedNumber.toLong() as T
+        is Float -> formattedNumber.toFloat() as T
+        is Double -> formattedNumber as T
+        else -> throw IllegalArgumentException("Unsupported number type")
+    }
+}
+
+internal fun <T : Number> toSevenDigits(number: T): T {
+    val formattedNumber = DecimalFormat("00000.0000000").format(number).toDouble()
+    @Suppress("UNCHECKED_CAST")
+    return when (number) {
+        is Byte -> formattedNumber.toInt().toByte() as T
+        is Short -> formattedNumber.toInt().toShort() as T
+        is Int -> formattedNumber.toInt() as T
+        is Long -> formattedNumber.toLong() as T
+        is Float -> formattedNumber.toFloat() as T
+        is Double -> formattedNumber as T
+        else -> throw IllegalArgumentException("Unsupported number type")
+    }
+}
+
+internal fun toTime(number: Number): String {
     val sdf = SimpleDateFormat("HH:mm:ss:SS", Locale.getDefault())
-    val time = Calendar.getInstance().apply { timeInMillis = this@toTime.toLong() }
+    val time = Calendar.getInstance().apply { timeInMillis = number.toLong() }
     return sdf.format(time.time)
 }
 
-
-*/
-/**
- * Checks whether Location Permission is granted or not
- * **//*
-
-fun Context.hasLocationPermission(): Boolean {
-    return ContextCompat.checkSelfPermission(
-        this, Manifest.permission.ACCESS_FINE_LOCATION
-    ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
-        this, Manifest.permission.ACCESS_COARSE_LOCATION
-    ) == PackageManager.PERMISSION_GRANTED
-}
-
-*/
-/**
- * Then we check for different types of network transports like WIFI, CELLULAR, and ETHERNET.
- *
- * If any of these transports are available, we assume that the internet is accessible.
- * **//*
-
-fun Context.isInternetAvailable(): Boolean {
-    val connectivityManager =
-        getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    val networkCapabilities = connectivityManager.activeNetwork ?: return false
-    val actNw = connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
-
-    return when {
-        actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-        // For other device-based internet connections such as Ethernet
-        actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-        else -> false
+internal fun getBitmapFromUri(contentResolver: ContentResolver, uri: Uri): Bitmap? {
+    var inputStream: InputStream? = null
+    try {
+        inputStream = contentResolver.openInputStream(uri)
+        if (inputStream != null) {
+            return BitmapFactory.decodeStream(inputStream)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    } finally {
+        inputStream?.close()
     }
+    return null
+}
+
+internal fun saveBitmapImageToFile(bitmap: Bitmap, context: Context, name: String): Uri? {
+    val imagesFolder = File(context.cacheDir, "images")
+    if (!imagesFolder.exists()) {
+        imagesFolder.mkdirs()
+    }
+    val imageFile = File(imagesFolder, "$name.jpg")
+
+    val fos = FileOutputStream(imageFile)
+    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+    fos.flush()
+    fos.close()
+
+    return Uri.fromFile(imageFile)
+}
+
+internal fun uriToBitmap(contentResolver: ContentResolver, imageUri: Uri): Bitmap? {
+    var inputStream: InputStream? = null
+    try {
+        inputStream = contentResolver.openInputStream(imageUri)
+        if (inputStream != null) {
+            return BitmapFactory.decodeStream(inputStream)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    } finally {
+        inputStream?.close()
+    }
+    return null
+}
+
+internal fun ByteArray.toBitmap(): Bitmap = BitmapFactory.decodeByteArray(this, 0, this.size)
+
+internal fun String.log(tag: String = "Log") =  Log.i(tag, "log: $this")
+internal fun Context.toast(m: String) = Toast.makeText(this, "$m", Toast.LENGTH_SHORT).show()
 
 
+val ioScope = CoroutineScope(Dispatchers.IO)
+val mainScope = CoroutineScope(Dispatchers.Main)
+
+internal fun CharSequence?.isNotNullOrEmpty(): Boolean = !this@isNotNullOrEmpty.isNullOrEmpty()
+
+internal val units = arrayOf("", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine")
+internal val teens = arrayOf(
+    "Ten",
+    "Eleven",
+    "Twelve",
+    "Thirteen",
+    "Fourteen",
+    "Fifteen",
+    "Sixteen",
+    "Seventeen",
+    "Eighteen",
+    "Nineteen"
+)
+internal val tens =
+    arrayOf("", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety")
+
+internal fun inConvertToWords(amount: Double): String {
+    if (amount == 0.0) {
+        return "Zero Rupees"
+    }
+    return convertAmount(amount).trim().replace(Regex("\\s+"), " ") + " Rupees"
+}
+
+internal fun convert(n: Int): String {
+    return when {
+        n < 10 -> units[n]
+        n < 20 -> teens[n - 10]
+        else -> {
+            val digit1 = n / 100
+            val digit2 = n % 100 / 10
+            val digit3 = n % 10
+
+            val result = StringBuilder()
+            if (digit1 > 0) {
+                result.append(units[digit1]).append(" Hundred ")
+            }
+            when {
+                digit2 > 1 -> {
+                    result.append(tens[digit2]).append(" ")
+                    if (digit3 > 0) {
+                        result.append(units[digit3])
+                    }
+                }
+
+                digit2 == 1 -> {
+                    result.append(teens[digit3])
+                }
+
+                digit3 > 0 -> {
+                    result.append(units[digit3])
+                }
+            }
+            result.toString()
+        }
+    }
+}
+
+internal fun convertAmount(amount: Double): String {
+    return when {
+        amount < 100 -> convert(amount.toInt())
+        amount < 1000 -> convert((amount / 100).toInt()) + " Hundred " + convert(amount.toInt() % 100)
+        amount < 100000 -> convert((amount / 1000).toInt()) + " Thousand " + convert(amount.toInt() % 1000)
+        amount < 10000000 -> convert((amount / 100000).toInt()) + " Lakh " + convert(amount.toInt() % 100000)
+        amount < 1000000000 -> convert((amount / 10000000).toInt()) + " Crore " + convert(amount.toInt() % 10000000)
+        else -> "Amount is too large"
+    }
 }
 
 
+@SuppressLint("SimpleDateFormat")
+internal fun inConvertMillisToDate(millis: Long?, pattern: String): String {
+    return if (millis != null) {
+        val dateFormat = SimpleDateFormat(pattern)
+        val date = Date(millis)
+        dateFormat.format(date)
+    } else {
+        val currentDate = Date()
+        val sdf = SimpleDateFormat(pattern, Locale.getDefault())
+        sdf.format(currentDate)
+    }
+}
 
-
-*/

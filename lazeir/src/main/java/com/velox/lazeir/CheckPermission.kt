@@ -1,4 +1,4 @@
-package com.velox.lazeir.utils
+package com.velox.lazeir
 
 import android.Manifest
 import android.content.Context
