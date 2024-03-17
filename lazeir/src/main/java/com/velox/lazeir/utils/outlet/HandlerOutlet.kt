@@ -52,16 +52,16 @@ fun <T> Response<T>.handleNetworkResponse(): Flow<RetrofitResource<T>> {
  * **/
 fun <T> Flow<RetrofitResource<T>>.handleFlow(
     onLoading: suspend (it: Boolean) -> Unit,
-    onFailure: suspend (it: String, errorObject: JSONObject, code: Int) -> Unit,
-    onSuccess: suspend (it: T) -> Unit
+    onFailure: suspend (it: String?, errorObject: JSONObject?, code: Int?) -> Unit,
+    onSuccess: suspend (it: T?) -> Unit
 ) {
     return handleFlow(this, onLoading, onFailure, onSuccess)
 }
 
 fun <T> Flow<RetrofitResource<T>>.handleFlowWithScope(
     onLoading: suspend (it: Boolean) -> Unit,
-    onFailure: suspend (it: String, errorObject: JSONObject, code: Int) -> Unit,
-    onSuccess: suspend (it: T) -> Unit
+    onFailure: suspend (it: String?, errorObject: JSONObject?, code: Int?) -> Unit,
+    onSuccess: suspend (it: T?) -> Unit
 ) {
     CoroutineScope(Dispatchers.IO).launch {
         return@launch handleFlow(this@handleFlowWithScope, onLoading, onFailure, onSuccess)
@@ -82,8 +82,8 @@ inline fun <reified T> handleNetworkResponse(crossinline call: suspend () -> Htt
 
 fun <T> Flow<KtorResource<T>>.handleKtorFlow(
     onLoading: suspend (it: Boolean) -> Unit,
-    onFailure: suspend (it: String, errorObject: JsonObject, code: Int) -> Unit,
-    onSuccess: suspend (it: T) -> Unit
+    onFailure: suspend (it: String?, errorObject: JsonObject?, code: Int?) -> Unit,
+    onSuccess: suspend (it: T?) -> Unit
 ) {
     return handleFlowKtor(this, onLoading, onFailure, onSuccess)
 }
