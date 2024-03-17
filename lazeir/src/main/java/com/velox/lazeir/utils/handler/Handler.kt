@@ -43,9 +43,9 @@ internal fun <T, O> handleNetworkResponse(
                 emit(RetrofitResource.Success(data))
             } else {
                 val code = response.code()
-                val errorBody = response.errorBody()!!.string()
+                val errorBody = response.errorBody()?.string()
                 try {
-                    val jObjError = JSONObject(errorBody)
+                    val jObjError = errorBody?.let { JSONObject(it) }
                     emit(RetrofitResource.Error("Response Error", jObjError, code))
                 } catch (e: Exception) {
                     e.message?.let { emit(RetrofitResource.Error(it, null, code)) }
@@ -130,15 +130,15 @@ internal fun <T, O> handleNetworkResponse(
 internal inline fun <T> handleFlow(
     flow: Flow<RetrofitResource<T>>,
     crossinline onLoading: suspend (it: Boolean) -> Unit,
-    crossinline onFailure: suspend (it: String, errorObject: JSONObject, code: Int) -> Unit,
-    crossinline onSuccess: suspend (it: T) -> Unit
+    crossinline onFailure: suspend (it: String?, errorObject: JSONObject?, code: Int?) -> Unit,
+    crossinline onSuccess: suspend (it: T?) -> Unit
 ) {
     CoroutineScope(Dispatchers.IO).launch {
         flow.collectLatest {
             when (it) {
                 is RetrofitResource.Error -> {
                     CoroutineScope(Dispatchers.Main).launch {
-                        onFailure.invoke(it.message!!, it.errorObject!!, it.code!!)
+                        onFailure.invoke(it.message, it.errorObject, it.code)
                     }
                 }
 
@@ -150,7 +150,7 @@ internal inline fun <T> handleFlow(
 
                 is RetrofitResource.Success -> {
                     CoroutineScope(Dispatchers.Main).launch {
-                        onSuccess.invoke(it.data!!)
+                        onSuccess.invoke(it.data)
                     }
                 }
             }
@@ -270,15 +270,15 @@ internal fun <T> handleNetworkCall(call: Call<T>): Flow<RetrofitResource<T>> {
 internal inline fun <T> handleFlowKtor(
     flow: Flow<KtorResource<T>>,
     crossinline onLoading: suspend (it: Boolean) -> Unit,
-    crossinline onFailure: suspend (it: String, errorObject: JsonObject, code: Int) -> Unit,
-    crossinline onSuccess: suspend (it: T) -> Unit,
+    crossinline onFailure: suspend (it: String?, errorObject: JsonObject?, code: Int?) -> Unit,
+    crossinline onSuccess: suspend (it: T?) -> Unit,
 ) {
     CoroutineScope(Dispatchers.IO).launch {
         flow.collectLatest {
             when (it) {
                 is KtorResource.Error -> {
                     CoroutineScope(Dispatchers.Main).launch {
-                        onFailure.invoke(it.message!!, it.errorObject!!, it.code!!)
+                        onFailure.invoke(it.message, it.errorObject, it.code)
                     }
                 }
 
@@ -290,7 +290,7 @@ internal inline fun <T> handleFlowKtor(
 
                 is KtorResource.Success -> {
                     CoroutineScope(Dispatchers.Main).launch {
-                        onSuccess.invoke(it.data!!)
+                        onSuccess.invoke(it.data)
                     }
                 }
             }
