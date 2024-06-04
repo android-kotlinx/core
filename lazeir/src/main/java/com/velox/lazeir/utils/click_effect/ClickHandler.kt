@@ -24,7 +24,7 @@ enum class ButtonState { Pressed, Idle }
 //    this.padding(top = 26.dp)
 //}
 
-internal fun Modifier.bounceClick(onClick:()->Unit) = composed {
+internal fun Modifier.internalBounceClick(onClick:()->Unit) = composed {
     var buttonState by remember { mutableStateOf(ButtonState.Idle) }
     val scale by animateFloatAsState(if (buttonState == ButtonState.Pressed) 0.70f else 1f,
         label = ""
@@ -53,7 +53,7 @@ internal fun Modifier.bounceClick(onClick:()->Unit) = composed {
         }
 }
 
-internal fun Modifier.pressClick(onClick: () -> Unit) = composed {
+internal fun Modifier.internalPressClick(onClick: () -> Unit) = composed {
     var buttonState by remember { mutableStateOf(ButtonState.Idle) }
     val ty by animateFloatAsState(if (buttonState == ButtonState.Pressed) 0f else -20f, label = "")
 
@@ -79,7 +79,7 @@ internal fun Modifier.pressClick(onClick: () -> Unit) = composed {
         }
 }
 
-internal fun Modifier.shakeClick(onClick: () -> Unit) = composed {
+internal fun Modifier.internalShakeClick(onClick: () -> Unit) = composed {
     var buttonState by remember { mutableStateOf(ButtonState.Idle) }
 
     val tx by animateFloatAsState(

@@ -9,6 +9,7 @@ import com.velox.lazeir.utils.conveter.cropCenter
 import com.velox.lazeir.utils.conveter.inConvertMillisToDate
 import com.velox.lazeir.utils.conveter.inConvertToWords
 import com.velox.lazeir.utils.conveter.toBase64
+import com.velox.lazeir.utils.conveter.toByteArray
 import com.velox.lazeir.utils.conveter.toBitMapFromBase64
 import com.velox.lazeir.utils.conveter.toByteArray
 import com.velox.lazeir.utils.conveter.toDecodedBase64
@@ -25,7 +26,7 @@ import com.velox.lazeir.utils.conveter.toWholeNumber
 
 
 fun Uri.toByteArray(context: Context): ByteArray? {
-    return  toByteArray(context)
+    return  toByteArray(this,context)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
