@@ -18,6 +18,34 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 
+
+///
+
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.with
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+//import androidx.compose.material3.SnackbarHost
+//import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+//import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+
+///
+
 enum class ButtonState { Pressed, Idle }
 //
 //fun Modifier.statusBarsPadding() = composed {
@@ -111,3 +139,4 @@ internal fun Modifier.internalShakeClick(onClick: () -> Unit) = composed {
             }
         }
 }
+
