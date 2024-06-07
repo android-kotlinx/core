@@ -1,0 +1,163 @@
+{
+  "project_info": {
+    "project_number": "179491372460",
+    "project_id": "fin-kotak",
+    "storage_bucket": "fin-kotak.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:179491372460:android:08717659854b8131754e09",
+        "android_client_info": {
+          "package_name": "com.iserveu.jkbk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "179491372460-qqftplhcggt9qenidqbda343o5qdu3oa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdd-ifUuraTxCSm3cblJ6S4iY_fDueBi4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "179491372460-qqftplhcggt9qenidqbda343o5qdu3oa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:179491372460:android:6c481dd847dd53f2754e09",
+        "android_client_info": {
+          "package_name": "com.iserveu.kotak_saarthi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "179491372460-qqftplhcggt9qenidqbda343o5qdu3oa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdd-ifUuraTxCSm3cblJ6S4iY_fDueBi4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "179491372460-qqftplhcggt9qenidqbda343o5qdu3oa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:179491372460:android:6c481dd847dd53f2754e09",
+        "android_client_info": {
+          "package_name": "com.iserveu.demoforsdksetup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "179491372460-qqftplhcggt9qenidqbda343o5qdu3oa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdd-ifUuraTxCSm3cblJ6S4iY_fDueBi4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "179491372460-qqftplhcggt9qenidqbda343o5qdu3oa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:179491372460:android:b3cb10f8c705ec63754e09",
+        "android_client_info": {
+          "package_name": "com.kotak.kotakpro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "179491372460-92794f1v0psbvvlg72hdbv3o6iir0akq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kotak.kotakpro",
+            "certificate_hash": "ba372dfe16df9b41be8a0e59bfd6a6dfa289ecf5"
+          }
+        },
+        {
+          "client_id": "179491372460-qqftplhcggt9qenidqbda343o5qdu3oa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdd-ifUuraTxCSm3cblJ6S4iY_fDueBi4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "179491372460-qqftplhcggt9qenidqbda343o5qdu3oa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:179491372460:android:20370013af7b4a6c754e09",
+        "android_client_info": {
+          "package_name": "com.kotak.kotakpro.inapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "179491372460-qqftplhcggt9qenidqbda343o5qdu3oa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdd-ifUuraTxCSm3cblJ6S4iY_fDueBi4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "179491372460-qqftplhcggt9qenidqbda343o5qdu3oa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
