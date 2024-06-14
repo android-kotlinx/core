@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonObject
-import org.apache.http.conn.ConnectTimeoutException
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.HttpException
@@ -156,37 +155,7 @@ internal class Handler:HandlerInterface {
     }
 }
 
-internal inline fun <T> HandlerInterface.handleFlowKtor(
-    flow: Flow<KtorResource<T>>,
-    crossinline onLoading: suspend (it: Boolean) -> Unit,
-    crossinline onFailure: suspend (it: String?, errorObject: JsonObject?, code: Int?) -> Unit,
-    crossinline onSuccess: suspend (it: T?) -> Unit,
-) {
-    CoroutineScope(Dispatchers.IO).launch {
-        onLoading(true)
-        flow.collectLatest {
-            when (it) {
-                is KtorResource.Error -> {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        onFailure.invoke(it.message, it.errorObject, it.code)
-                    }
-                }
 
-                is KtorResource.Loading -> {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        onLoading.invoke(it.isLoading)
-                    }
-                }
-
-                is KtorResource.Success -> {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        onSuccess.invoke(it.data)
-                    }
-                }
-            }
-        }
-    }
-}
 
 inline fun <reified T> HandlerInterface.handleNetworkResponse(crossinline call: suspend () -> HttpResponse): Flow<KtorResource<T>> {
     return flow {
@@ -253,6 +222,39 @@ inline fun <reified T> HandlerInterface.handleNetworkResponse(crossinline call: 
         }
 
         emit(KtorResource.Loading(isLoading = false))
+    }
+}
+
+
+internal inline fun <T> HandlerInterface.handleFlowKtor(
+    flow: Flow<KtorResource<T>>,
+    crossinline onLoading: suspend (it: Boolean) -> Unit,
+    crossinline onFailure: suspend (it: String?, errorObject: JsonObject?, code: Int?) -> Unit,
+    crossinline onSuccess: suspend (it: T?) -> Unit,
+) {
+    CoroutineScope(Dispatchers.IO).launch {
+        onLoading(true)
+        flow.collectLatest {
+            when (it) {
+                is KtorResource.Error -> {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        onFailure.invoke(it.message, it.errorObject, it.code)
+                    }
+                }
+
+                is KtorResource.Loading -> {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        onLoading.invoke(it.isLoading)
+                    }
+                }
+
+                is KtorResource.Success -> {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        onSuccess.invoke(it.data)
+                    }
+                }
+            }
+        }
     }
 }
 

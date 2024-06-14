@@ -1,6 +1,7 @@
 package com.androidx.core.outlet
 
 import android.annotation.SuppressLint
+import androidx.annotation.Keep
 import com.androidx.core.domain.handler
 import com.androidx.core.utils.network_handler.KtorResource
 import com.androidx.core.utils.network_handler.RetrofitResource
@@ -17,13 +18,14 @@ import retrofit2.Response
 /*@Deprecated("use KtorResource instead",)
 typealias NetworkResourceKtor<T> = KtorResource<T>*/
 
+@Keep
 fun <T, O> handleNetworkResponse(
     call: suspend () -> Response<T>, mapFun: (it: T) -> O
 ): Flow<RetrofitResource<O>> {
     return handler.handleNetworkResponse(call, mapFun)
 }
 
-
+@Keep
 fun <T> Flow<KtorResource<T>>.handleKtorFlow(
     onLoading: suspend (it: Boolean) -> Unit,
     onFailure: suspend (it: String?, errorObject: JsonObject?, code: Int?) -> Unit,
@@ -32,22 +34,13 @@ fun <T> Flow<KtorResource<T>>.handleKtorFlow(
     return handler.handleFlowKtor(this, onLoading, onFailure, onSuccess)
 }
 
-/**
- * [handleNetworkResponse] handle the API response,
- * convert the dto response to domain response
- * extracting the error according to the error code
- *
- * */
-fun <T> Response<T>.handleNetworkResponse(): Flow<RetrofitResource<T>> {
-    return handler.handleNetworkResponse(this)
-}
-
 
 /**
  * [handleFlow] takes the response from use case function as Resource<> with in Main Coroutine Scope
  * return the extracted response with in onLoading(),onFailure(),onSuccess()
  * Call within IO Scope
  * **/
+@Keep
 fun <T> Flow<RetrofitResource<T>>.handleFlow(
     onLoading: suspend (it: Boolean) -> Unit,
     onFailure: suspend (it: String?, errorObject: JSONObject?, code: Int?) -> Unit,
@@ -55,9 +48,20 @@ fun <T> Flow<RetrofitResource<T>>.handleFlow(
 ) {
     return handler.handleFlow(this, onLoading, onFailure, onSuccess)
 }
+/**
+ * [handleNetworkResponse] handle the API response,
+ * convert the dto response to domain response
+ * extracting the error according to the error code
+ *
+ * */
+@Keep
+fun <T> Response<T>.handleNetworkResponse(): Flow<RetrofitResource<T>> {
+    return handler.handleNetworkResponse(this)
+}
 
 
-@SuppressLint("LogNotTimber")
+
+@Keep
 fun <T> Call<T>.handleNetworkCall(): Flow<RetrofitResource<T>> {
     return handler.handleNetworkCall(this)
 }
@@ -73,6 +77,7 @@ fun <T> Call<T>.handleNetworkCall(): Flow<RetrofitResource<T>> {
  * @param call A suspending function that makes the network request and returns an [HttpResponse].
  * @return A Flow of [KtorResource] objects representing the processed network response.
  */
+@Keep
 inline fun <reified T> handleNetworkResponse(crossinline call: suspend () -> HttpResponse): Flow<KtorResource<T>> {
     return handler.handleNetworkResponse(call)
 }

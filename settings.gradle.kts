@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "lazier"
+rootProject.name = "core"
 include(":app")
 include(":core")

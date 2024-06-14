@@ -26,3 +26,4 @@ internal suspend inline fun <T> Call<T>.awaitHandler(): Response<T> = suspendCor
     }
     enqueue(callback)
 }
+

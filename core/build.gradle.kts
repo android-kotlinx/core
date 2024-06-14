@@ -28,11 +28,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "1.8"
     }
     buildFeatures {
         compose = true
@@ -67,6 +67,11 @@ dependencies {
 //    debugImplementation(libs.androidx.ui.tooling)
 //    debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.lifecycle.common.jvm)
+
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
@@ -86,6 +91,7 @@ dependencies {
     // Moshi
     implementation("com.squareup.moshi:moshi:1.15.1")
     implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
+
     kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
 
     implementation("com.google.android.gms:play-services-location:21.3.0")
@@ -104,5 +110,5 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:2.2.4")
     implementation("io.ktor:ktor-client-okhttp:2.3.2")
 
-    implementation("androidx.work:work-runtime:2.9.0")
+    implementation(libs.androidx.work.runtime)
 }
