@@ -9,7 +9,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import kotlinx.coroutines.CoroutineScope
 
-interface ConverterInterface {
+internal interface ConverterInterface {
 
     @SuppressLint("Recycle")
     fun toByteArray(uri: Uri, context: Context): ByteArray?

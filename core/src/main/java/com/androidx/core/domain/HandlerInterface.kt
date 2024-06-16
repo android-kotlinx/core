@@ -7,7 +7,7 @@ import retrofit2.Call
 import retrofit2.Response
 
 
-public interface HandlerInterface {
+interface HandlerInterface {
 
 
     fun <T, O> handleNetworkResponse(

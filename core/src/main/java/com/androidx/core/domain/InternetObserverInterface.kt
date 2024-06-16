@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import com.androidx.core.utils.internet_observer.InternetObserver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-interface InternetObserverInterface {
+internal interface InternetObserverInterface {
 
      fun inInternetConnectivityListener(
         context: Context,
