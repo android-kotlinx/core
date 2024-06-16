@@ -26,6 +26,7 @@ fun Context.isInternetAvailable(): Boolean {
         else -> false
     }
 }
+
 fun checkForPermission(permission: String, context: Context): Boolean =
     context.packageManager.checkPermission(
         permission, context.packageName

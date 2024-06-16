@@ -29,4 +29,3 @@ interface InternetObserverInterface {
     )
 }
 
-val internetObserver:InternetObserverInterface = InternetObserver()

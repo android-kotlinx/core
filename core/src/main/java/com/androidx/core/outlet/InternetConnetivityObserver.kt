@@ -5,9 +5,10 @@ import androidx.annotation.Keep
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.MutableLiveData
-import com.androidx.core.domain.internetObserver
+import com.androidx.core.domain.InternetObserverInterface
+import com.androidx.core.utils.internet_observer.InternetObserver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-
+private val internetObserver: InternetObserverInterface = InternetObserver()
 
 /**
  * [internetConnectivityListener] is a observer which keep observing connectivity of the network

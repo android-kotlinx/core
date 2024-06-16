@@ -21,5 +21,5 @@ public interface HandlerInterface {
 }
 
 
-val handler : HandlerInterface=Handler()
+
 

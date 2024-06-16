@@ -35,3 +35,5 @@ fun checkAndRequestPermissions(activity: Activity, permissions: List<String>): L
     return permissionsResultList
 }
 
+
+

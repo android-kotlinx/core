@@ -12,22 +12,22 @@ import com.androidx.core.utils.location_observer.LocationRepository
 
 
 class LocationReceiver {
-val d :LocationInterface = LocationRepository()
-    private val locationRepository:LocationInterface = LocationRepository()
+
+    private val repo:LocationInterface = LocationRepository()
     fun isGpsHardwareEnabled(context: Context) =
-        locationRepository.inIsGpsHardwareEnabled(context)
+        repo.inIsGpsHardwareEnabled(context)
 
-    val isGpsState = locationRepository.isGpsEnabled
+    val isGpsState = repo.isGpsEnabled
     fun requestLocationEnabler(activity: Activity?, result: (Boolean) -> Unit) =
-        locationRepository.requestLocationEnabler(activity, result)
+        repo.requestLocationEnabler(activity, result)
 
-    fun openLocationSetting(context: Context) = locationRepository.openLocationSetting(context)
+    fun openLocationSetting(context: Context) = repo.openLocationSetting(context)
 
     fun registerGpsStateReceiver(context: Context) =
-        locationRepository.registerGpsStateReceiver(context)
+        repo.registerGpsStateReceiver(context)
 
     fun unregisterGpsStateReceiver(context: Context) =
-        locationRepository.unregisterGpsStateReceiver(context)
+        repo.unregisterGpsStateReceiver(context)
 
     fun getLocation(
         context: Context, onResult: (CurrentLocationData?) -> Unit,
@@ -36,7 +36,7 @@ val d :LocationInterface = LocationRepository()
         onGpsDisabled: (String) -> Unit = {},
         getLocationOnes:Boolean  = true,
     ): LocationListener? {
-        return locationRepository.getLocation(
+        return repo.getLocation(
             context,
             onResult,
             onFailure,
@@ -46,7 +46,7 @@ val d :LocationInterface = LocationRepository()
     }
 
     fun removeGpsListener(listener: LocationListener){
-        locationRepository.removeGpsListener(listener)
+        repo.removeGpsListener(listener)
     }
 
 
@@ -54,7 +54,7 @@ val d :LocationInterface = LocationRepository()
     @SuppressLint("MissingPermission")
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getCurrentLocation(context: Context, priority: Int): CurrentLocationData? =
-        locationRepository.getCurrentLocation(context, priority)
+        repo.getCurrentLocation(context, priority)
 
 
 }

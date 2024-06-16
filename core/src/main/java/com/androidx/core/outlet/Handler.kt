@@ -1,8 +1,9 @@
 package com.androidx.core.outlet
 
-import android.annotation.SuppressLint
+
 import androidx.annotation.Keep
-import com.androidx.core.domain.handler
+import com.androidx.core.domain.HandlerInterface
+import com.androidx.core.utils.network_handler.Handler
 import com.androidx.core.utils.network_handler.KtorResource
 import com.androidx.core.utils.network_handler.RetrofitResource
 import com.androidx.core.utils.network_handler.handleFlow
@@ -15,6 +16,7 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
 
+val handler : HandlerInterface = Handler()
 /*@Deprecated("use KtorResource instead",)
 typealias NetworkResourceKtor<T> = KtorResource<T>*/
 
