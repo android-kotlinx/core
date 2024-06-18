@@ -1,6 +1,7 @@
 package com.androidx.core.outlet
 
 import android.content.Context
+import androidx.annotation.Keep
 import com.androidx.core.domain.ImplicitIntentInterface
 import com.androidx.core.utils.implicit_intent.ImplicitIntent
 
@@ -36,6 +37,8 @@ private val intent :ImplicitIntentInterface = ImplicitIntent()
  * remember to add  **implementation 'androidx.work:work-runtime-ktx:TAG'**
 
  * */
+
+@Keep
 fun <T> Context.startImplicitActivity(
     packageName: String,
     activityName: String,
