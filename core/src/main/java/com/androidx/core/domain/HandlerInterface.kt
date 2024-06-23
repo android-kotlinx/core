@@ -1,7 +1,6 @@
 package com.androidx.core.domain
 
-import com.androidx.core.utils.network_handler.Handler
-import com.androidx.core.utils.network_handler.RetrofitResource
+import com.androidx.core.outlet.model.RetrofitResource
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Call
 import retrofit2.Response
