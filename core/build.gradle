@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+
+    id 'kotlin-android'
     id 'kotlin-kapt'
     id "maven-publish"
 }
@@ -52,9 +54,6 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
     implementation(libs.retrofit2.kotlin.coroutines.adapter)
-
-    // Uncomment if needed
-    // implementation("org.conscrypt:conscrypt-android:2.5.2")
 
     implementation(libs.converter.gson)
     implementation(libs.converter.scalars)
