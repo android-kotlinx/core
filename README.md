@@ -1,12 +1,9 @@
-# lazier
+# CORE
 
 ![sleeping](https://github.com/blazebezz/lazier/assets/48889698/f09d096c-87ce-496e-a59e-50ccaa77aa37)
 
-jst b lazeeee
 
-
-
-last stable: implementation 'com.github.blazebezz:lazier:  [![](https://jitpack.io/v/blazebezz/lazier.svg)](https://jitpack.io/#blazebezz/lazier)'
+last stable:  implementation 'com.github.android-kotlinx:core:  [![](https://jitpack.io/v/android-kotlinx/core.svg)](https://jitpack.io/#android-kotlinx/core)'
 
                     GNU AFFERO GENERAL PUBLIC LICENSE
                        Version 3, 19 November 2007
