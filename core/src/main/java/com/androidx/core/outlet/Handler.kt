@@ -4,8 +4,8 @@ package com.androidx.core.outlet
 import androidx.annotation.Keep
 import com.androidx.core.domain.HandlerInterface
 import com.androidx.core.utils.network_handler.Handler
-import com.androidx.core.utils.network_handler.KtorResource
-import com.androidx.core.utils.network_handler.RetrofitResource
+import com.androidx.core.outlet.pub.KtorResource
+import com.androidx.core.outlet.pub.RetrofitResource
 import com.androidx.core.utils.network_handler.handleFlow
 import com.androidx.core.utils.network_handler.handleFlowKtor
 import com.androidx.core.utils.network_handler.handleNetworkResponse

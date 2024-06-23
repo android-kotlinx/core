@@ -8,7 +8,7 @@ import android.os.Build
 import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
 import com.androidx.core.domain.LocationInterface
-import com.androidx.core.utils.location_observer.CurrentLocationData
+import com.androidx.core.outlet.pub.CurrentLocationData
 import com.androidx.core.utils.location_observer.LocationRepository
 
 @Keep

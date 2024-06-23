@@ -1,4 +1,4 @@
-package com.androidx.core.utils.location_observer
+package com.androidx.core.outlet.pub
 
 import androidx.annotation.Keep
 

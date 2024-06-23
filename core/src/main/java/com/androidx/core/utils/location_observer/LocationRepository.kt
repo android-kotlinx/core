@@ -10,10 +10,10 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.provider.Settings
-import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import com.androidx.core.domain.LocationInterface
+import com.androidx.core.outlet.pub.CurrentLocationData
 import com.androidx.core.utils.permission.hasLocationPermission
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource

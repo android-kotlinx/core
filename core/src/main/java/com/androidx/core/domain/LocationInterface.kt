@@ -7,7 +7,7 @@ import android.location.LocationListener
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.MutableState
-import com.androidx.core.utils.location_observer.CurrentLocationData
+import com.androidx.core.outlet.pub.CurrentLocationData
 
 internal interface LocationInterface {
 

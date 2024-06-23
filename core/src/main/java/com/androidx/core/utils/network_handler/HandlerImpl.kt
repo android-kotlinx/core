@@ -4,6 +4,8 @@ import android.util.Log
 import com.androidx.core.awaitHandler
 import com.androidx.core.domain.HandlerInterface
 import com.androidx.core.getJSONObject
+import com.androidx.core.outlet.pub.KtorResource
+import com.androidx.core.outlet.pub.RetrofitResource
 import com.google.gson.JsonSyntaxException
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ClientRequestException
