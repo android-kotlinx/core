@@ -1,7 +1,11 @@
-package com.androidx.core.utils.outlet
+package com.androidx.core.outlet
 
 import android.content.Context
-import com.androidx.core.utils.outerintent.inStartActivity
+import androidx.annotation.Keep
+import com.androidx.core.domain.ImplicitIntentInterface
+import com.androidx.core.utils.implicit_intent.ImplicitIntent
+
+private val intent :ImplicitIntentInterface = ImplicitIntent()
 
 
 /**
@@ -33,10 +37,13 @@ import com.androidx.core.utils.outerintent.inStartActivity
  * remember to add  **implementation 'androidx.work:work-runtime-ktx:TAG'**
 
  * */
-fun <T> Context.startOuterActivity(
+
+@Keep
+fun <T> Context.startImplicitActivity(
     packageName: String,
     activityName: String,
     dataToIntent: List<Pair<String, T?>?>?
 ) {
-    inStartActivity(this, packageName, activityName, dataToIntent)
+    intent.inStartImplicitActivity(this, packageName, activityName, dataToIntent)
 }
+

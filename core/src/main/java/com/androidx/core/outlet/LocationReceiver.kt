@@ -1,31 +1,42 @@
-package com.androidx.core.utils.outlet
+package com.androidx.core.outlet
 
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.location.LocationListener
 import android.os.Build
+import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
+import com.androidx.core.domain.LocationInterface
 import com.androidx.core.utils.location_observer.CurrentLocationData
 import com.androidx.core.utils.location_observer.LocationRepository
 
+@Keep
 class LocationReceiver {
-    private val locationRepository = LocationRepository()
+
+    private val repo:LocationInterface = LocationRepository()
+    @Keep
     fun isGpsHardwareEnabled(context: Context) =
-        locationRepository.inIsGpsHardwareEnabled(context)
+        repo.inIsGpsHardwareEnabled(context)
+    @Keep
+    val isGpsState = repo.isGpsEnabled
 
-    val isGpsState = locationRepository.isGpsEnabled
+    @Keep
     fun requestLocationEnabler(activity: Activity?, result: (Boolean) -> Unit) =
-        locationRepository.requestLocationEnabler(activity, result)
+        repo.requestLocationEnabler(activity, result)
 
-    fun openLocationSetting(context: Context) = locationRepository.openLocationSetting(context)
+    @Keep
+    fun openLocationSetting(context: Context) = repo.openLocationSetting(context)
 
+    @Keep
     fun registerGpsStateReceiver(context: Context) =
-        locationRepository.registerGpsStateReceiver(context)
+        repo.registerGpsStateReceiver(context)
 
+    @Keep
     fun unregisterGpsStateReceiver(context: Context) =
-        locationRepository.unregisterGpsStateReceiver(context)
+        repo.unregisterGpsStateReceiver(context)
 
+    @Keep
     fun getLocation(
         context: Context, onResult: (CurrentLocationData?) -> Unit,
         onFailure: (String) -> Unit,
@@ -33,7 +44,7 @@ class LocationReceiver {
         onGpsDisabled: (String) -> Unit = {},
         getLocationOnes:Boolean  = true,
     ): LocationListener? {
-        return locationRepository.getLocation(
+        return repo.getLocation(
             context,
             onResult,
             onFailure,
@@ -42,17 +53,17 @@ class LocationReceiver {
         )
     }
 
+    @Keep
     fun removeGpsListener(listener: LocationListener){
-        locationRepository.removeGpsListener(listener)
+        repo.removeGpsListener(listener)
     }
 
 
-
-
+    @Keep
     @SuppressLint("MissingPermission")
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getCurrentLocation(context: Context, priority: Int): CurrentLocationData? =
-        locationRepository.getCurrentLocation(context, priority)
+        repo.getCurrentLocation(context, priority)
 
 
 }

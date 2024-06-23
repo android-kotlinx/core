@@ -1,6 +1,5 @@
 package com.androidx.core.utils.location_observer
 
-import com.androidx.core.hasLocationPermission
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
@@ -14,15 +13,17 @@ import android.provider.Settings
 import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
+import com.androidx.core.domain.LocationInterface
+import com.androidx.core.utils.permission.hasLocationPermission
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource
 import kotlinx.coroutines.tasks.await
 
 
-internal class LocationRepository  {
+internal class LocationRepository:LocationInterface  {
 
-    val isGpsEnabled = mutableStateOf(false)
-    fun requestLocationEnabler(activity: Activity?, result: (Boolean) -> Unit) {
+    override val isGpsEnabled = mutableStateOf(false)
+    override fun requestLocationEnabler(activity: Activity?, result: (Boolean) -> Unit) {
         requestLocationEnable(activity, result)
     }
     private lateinit var locationManager: LocationManager
@@ -32,24 +33,25 @@ internal class LocationRepository  {
 
 
 
-    fun inIsGpsHardwareEnabled(context: Context): Boolean {
+
+   override fun inIsGpsHardwareEnabled(context: Context): Boolean {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
-    fun openLocationSetting(context: Context) {
+    override fun openLocationSetting(context: Context) {
         val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }
 
-    fun registerGpsStateReceiver(context: Context) {
+   override fun registerGpsStateReceiver(context: Context) {
         val intentFilter = IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION)
         context.registerReceiver(gpsStateReceiver, intentFilter)
         isLocationReceiverRegistered.value = true
     }
 
-    fun unregisterGpsStateReceiver(context: Context) {
+    override fun unregisterGpsStateReceiver(context: Context) {
         if (isLocationReceiverRegistered.value) {
             context.unregisterReceiver(gpsStateReceiver)
             isLocationReceiverRegistered.value = false
@@ -58,7 +60,7 @@ internal class LocationRepository  {
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingPermission")
-    suspend fun getCurrentLocation(context: Context, priority: Int): CurrentLocationData? {
+    override suspend fun getCurrentLocation(context: Context, priority: Int): CurrentLocationData? {
         if (context.hasLocationPermission()) {
             if (inIsGpsHardwareEnabled(context)) {
                 val locationClient = LocationServices.getFusedLocationProviderClient(context)
@@ -83,13 +85,14 @@ internal class LocationRepository  {
     }
 
     @SuppressLint("MissingPermission")
-    internal fun getLocation(
+    override fun getLocation(
         context: Context, onResult: (CurrentLocationData?) -> Unit,
         onFailure: (String) -> Unit,
-        onGpsEnabled: (String) -> Unit = {},
-        onGpsDisabled: (String) -> Unit = {},
+        onGpsEnabled: (String) -> Unit,
+        onGpsDisabled: (String) -> Unit,
         getLocationOnes: Boolean,
-                                ) :LocationListener ? {
+        ) :LocationListener ? {
+
         locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         if ( inIsGpsHardwareEnabled(context)) {
@@ -153,7 +156,7 @@ internal class LocationRepository  {
             return null
         }
     }
-    internal fun removeGpsListener(listener: LocationListener){
+    override fun removeGpsListener(listener: LocationListener){
         locationManager.removeUpdates(listener)
     }
 
@@ -161,12 +164,3 @@ internal class LocationRepository  {
 
 
 
-@Keep
-data class CurrentLocationData(
-    val lat: String,
-    val long: String,
-    val alt: String? = null,
-    val bearing: String? = null,
-    val accuracy: Float? = null,
-    val verticalAccuracy: Float? = null,
-)

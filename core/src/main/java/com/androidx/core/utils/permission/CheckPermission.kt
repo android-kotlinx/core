@@ -1,4 +1,4 @@
-package com.androidx.core
+package com.androidx.core.utils.permission
 
 import android.Manifest
 import android.content.Context
@@ -26,6 +26,7 @@ fun Context.isInternetAvailable(): Boolean {
         else -> false
     }
 }
+
 fun checkForPermission(permission: String, context: Context): Boolean =
     context.packageManager.checkPermission(
         permission, context.packageName

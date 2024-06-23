@@ -1,4 +1,4 @@
-package com.androidx.core.utils
+package com.androidx.core
 
 import org.json.JSONObject
 import retrofit2.Call
@@ -26,3 +26,4 @@ internal suspend inline fun <T> Call<T>.awaitHandler(): Response<T> = suspendCor
     }
     enqueue(callback)
 }
+

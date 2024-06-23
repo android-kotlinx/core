@@ -1,4 +1,4 @@
-package com.androidx.core.utils.handler
+package com.androidx.core.utils.network_handler
 
 interface Mapper<I, O> {
     fun map(input: I): O
