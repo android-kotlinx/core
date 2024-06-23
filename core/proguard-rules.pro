@@ -24,4 +24,5 @@
 -keep class com.squareup.moshi.** {*;}
 -keep class com.jakewharton.retrofit2.** {*;}
 -keep class com.google.** {*;}
+-dontwarn java.lang.invoke.StringConcatFactory
 
