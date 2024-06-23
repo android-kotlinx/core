@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.velox.lazier'
+    namespace 'com.velox.applevel'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.velox.lazier"
+        applicationId "com.androidx.applevel"
         minSdk 24
         targetSdk 34
         versionCode 1
