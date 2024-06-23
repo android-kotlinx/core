@@ -21,4 +21,7 @@
 #-renamesourcefileattribute SourceFile
 
 -keep class com.androidx.core.outlet.** {*;}
+-keep class com.squareup.moshi.** {*;}
+-keep class com.jakewharton.retrofit2.** {*;}
+-keep class com.google.** {*;}
 
