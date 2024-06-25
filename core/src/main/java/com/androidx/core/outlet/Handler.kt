@@ -1,6 +1,7 @@
 package com.androidx.core.outlet
 
 
+import android.util.Log
 import androidx.annotation.Keep
 import com.androidx.core.domain.HandlerInterface
 import com.androidx.core.utils.network_handler.Handler
@@ -9,12 +10,21 @@ import com.androidx.core.outlet.pub.RetrofitResource
 import com.androidx.core.utils.network_handler.handleFlow
 import com.androidx.core.utils.network_handler.handleFlowKtor
 import com.androidx.core.utils.network_handler.handleNetworkResponse
+import io.ktor.client.call.body
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.RedirectResponseException
+import io.ktor.client.plugins.ResponseException
+import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.statement.HttpResponse
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.JsonObject
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
+import java.io.IOException
+import java.net.SocketTimeoutException
+import java.util.concurrent.TimeoutException
 
 val handler : HandlerInterface = Handler()
 /*@Deprecated("use KtorResource instead",)
@@ -80,8 +90,74 @@ fun <T> Call<T>.handleNetworkCall(): Flow<RetrofitResource<T>> {
  * @return A Flow of [KtorResource] objects representing the processed network response.
  */
 @Keep
-inline fun <reified T> handleNetworkResponse(crossinline call: suspend () -> HttpResponse): Flow<KtorResource<T>> {
-    return handleNetworkResponse(call)
+inline fun < reified T> handleNetworkResponse(crossinline call: suspend () -> HttpResponse): Flow<KtorResource<T>> {
+    return flow {
+        emit(KtorResource.Loading(isLoading = true))
+        try {
+            val response = call.invoke()
+            Log.i("HandleNetworkResponse", "$response \n ${response.body<T>()}")
+            val status = response.status.value
+            if (status == 200) {
+                emit(KtorResource.Success(response.body()))
+            } else {
+                emit(KtorResource.Error("Call Exception", response.body(), status))
+            }
+
+        } catch (e: ClientRequestException) {
+            emit(
+                KtorResource.Error(
+                    "ClientRequestException",
+                    e.response.body(),
+                    e.response.status.value
+                )
+            )
+        } catch (e: ServerResponseException) {
+            emit(
+                KtorResource.Error(
+                    "ServerResponseException",
+                    e.response.body(),
+                    e.response.status.value
+                )
+            )
+        } catch (e: RedirectResponseException) {
+            emit(
+                KtorResource.Error(
+                    "RedirectResponseException",
+                    e.response.body(),
+                    e.response.status.value
+                )
+            )
+        } catch (e: ResponseException) {
+            emit(
+                KtorResource.Error(
+                    "ResponseException",
+                    e.response.body(),
+                    e.response.status.value
+                )
+            )
+        } catch (e: SecurityException) {
+
+            emit(KtorResource.Error("Connection Timeout"))
+        } catch (e: SocketTimeoutException) {
+
+            emit(KtorResource.Error("Socket Timeout"))
+        } catch (e: IOException) {
+
+            emit(KtorResource.Error(e.message ?: "Unknown IO Error"))
+        } catch (e: TimeoutException) {
+            emit(KtorResource.Error(e.message ?: "Unknown TimeoutException Error"))
+        } catch (e: Exception) {
+            emit(KtorResource.Error(e.message ?: "Unknown Error"))
+        } catch (e: IllegalArgumentException) {
+            emit(KtorResource.Error(e.message ?: "IllegalArgumentException"))
+        } catch (e: UnsupportedOperationException) {
+            emit(KtorResource.Error(e.message ?: "UnsupportedOperationException"))
+        }
+
+        emit(KtorResource.Loading(isLoading = false))
+    }
 }
+
+
 
 

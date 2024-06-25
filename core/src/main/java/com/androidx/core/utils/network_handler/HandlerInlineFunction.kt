@@ -22,7 +22,7 @@ import java.net.SocketTimeoutException
 import java.util.concurrent.TimeoutException
 
 
-inline fun <reified T> handleNetworkResponse(crossinline call: suspend () -> HttpResponse): Flow<KtorResource<T>> {
+ inline fun < reified T> handleNetworkResponse(crossinline call: suspend () -> HttpResponse): Flow<KtorResource<T>> {
     return flow {
         emit(KtorResource.Loading(isLoading = true))
         try {
