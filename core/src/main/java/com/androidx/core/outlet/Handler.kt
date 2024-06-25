@@ -33,7 +33,7 @@ fun <T> Flow<KtorResource<T>>.handleKtorFlow(
     onFailure: suspend (it: String?, errorObject: JsonObject?, code: Int?) -> Unit,
     onSuccess: suspend (it: T?) -> Unit
 ) {
-    return handler.handleFlowKtor(this, onLoading, onFailure, onSuccess)
+    return handleFlowKtor(this, onLoading, onFailure, onSuccess)
 }
 
 
@@ -48,7 +48,7 @@ fun <T> Flow<RetrofitResource<T>>.handleFlow(
     onFailure: suspend (it: String?, errorObject: JSONObject?, code: Int?) -> Unit,
     onSuccess: suspend (it: T?) -> Unit
 ) {
-    return handler.handleFlow(this, onLoading, onFailure, onSuccess)
+    return handleFlow(this, onLoading, onFailure, onSuccess)
 }
 /**
  * [handleNetworkResponse] handle the API response,
@@ -81,7 +81,7 @@ fun <T> Call<T>.handleNetworkCall(): Flow<RetrofitResource<T>> {
  */
 @Keep
 inline fun <reified T> handleNetworkResponse(crossinline call: suspend () -> HttpResponse): Flow<KtorResource<T>> {
-    return handler.handleNetworkResponse(call)
+    return handleNetworkResponse(call)
 }
 
 
