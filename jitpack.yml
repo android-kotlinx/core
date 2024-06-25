@@ -7,4 +7,7 @@ before_install:
   - export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8 -Dhttps.protocols=TLSv1.2"
 
 install:
-  - ./gradlew clean build
+   - ./gradlew clean build
+   - ./gradlew installDebug
+   - cp -v build/outputs/aar/*.aar build/libs/
+
