@@ -2,8 +2,9 @@ jdk:
   - openjdk17
 
 before_install:
-  - 'echo setting up JAVA_HOME'
-  - 'export JAVA_HOME=/path/to/java-home'
-  - 'export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8 -Dhttps.protocols=TLSv1.2'
+  - sdk install java 17.0.11-oracle
+  - sdk use java 17.0.11-oracle
+  - export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8 -Dhttps.protocols=TLSv1.2"
+
 install:
   - ./gradlew clean install
