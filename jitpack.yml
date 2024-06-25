@@ -1,0 +1,9 @@
+jdk:
+  - openjdk17
+
+before_install:
+  - 'echo setting up JAVA_HOME'
+  - 'export JAVA_HOME=/path/to/java-home'
+
+install:
+  - ./gradlew clean install
