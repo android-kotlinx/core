@@ -6,17 +6,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.MutableLiveData
-import com.androidx.core.domain.InternetObserverInterface
-import com.androidx.core.utils.internet_observer.ConnectivityObserver
-import com.androidx.core.utils.internet_observer.NetworkConnectivityObserver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 
-internal class InternetObserver:InternetObserverInterface{
+
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun inInternetConnectivityListener(
+    fun inInternetConnectivityListener(
         context: Context,
         lifecycleScope: LifecycleCoroutineScope,
         onAvailable: (it: String) -> Unit,
@@ -37,7 +34,7 @@ internal class InternetObserver:InternetObserverInterface{
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Composable
-    override fun InInternetConnectivityListener(
+    fun InInternetConnectivityListener(
         lifecycleScope: LifecycleCoroutineScope,
         stateChangeText: MutableLiveData<String>?,
         onAvailable: () -> Unit,
@@ -61,7 +58,7 @@ internal class InternetObserver:InternetObserverInterface{
         }
     }
 
-}
+
 
 
 

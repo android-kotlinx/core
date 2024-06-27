@@ -3,12 +3,11 @@ package com.androidx.core.outlet
 
 import android.util.Log
 import androidx.annotation.Keep
-import com.androidx.core.domain.HandlerInterface
-import com.androidx.core.utils.network_handler.Handler
 import com.androidx.core.outlet.pub.KtorResource
 import com.androidx.core.outlet.pub.RetrofitResource
 import com.androidx.core.utils.network_handler.handleFlow
 import com.androidx.core.utils.network_handler.handleFlowKtor
+import com.androidx.core.utils.network_handler.handleNetworkCall
 import com.androidx.core.utils.network_handler.handleNetworkResponse
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ClientRequestException
@@ -26,18 +25,18 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeoutException
 
-val handler : HandlerInterface = Handler()
+
 /*@Deprecated("use KtorResource instead",)
 typealias NetworkResourceKtor<T> = KtorResource<T>*/
 
-@Keep
+
 fun <T, O> handleNetworkResponse(
     call: suspend () -> Response<T>, mapFun: (it: T) -> O
 ): Flow<RetrofitResource<O>> {
-    return handler.handleNetworkResponse(call, mapFun)
+    return handleNetworkResponse(call, mapFun)
 }
 
-@Keep
+
 fun <T> Flow<KtorResource<T>>.handleKtorFlow(
     onLoading: suspend (it: Boolean) -> Unit,
     onFailure: suspend (it: String?, errorObject: JsonObject?, code: Int?) -> Unit,
@@ -52,7 +51,7 @@ fun <T> Flow<KtorResource<T>>.handleKtorFlow(
  * return the extracted response with in onLoading(),onFailure(),onSuccess()
  * Call within IO Scope
  * **/
-@Keep
+
 fun <T> Flow<RetrofitResource<T>>.handleFlow(
     onLoading: suspend (it: Boolean) -> Unit,
     onFailure: suspend (it: String?, errorObject: JSONObject?, code: Int?) -> Unit,
@@ -66,16 +65,15 @@ fun <T> Flow<RetrofitResource<T>>.handleFlow(
  * extracting the error according to the error code
  *
  * */
-@Keep
+
 fun <T> Response<T>.handleNetworkResponse(): Flow<RetrofitResource<T>> {
-    return handler.handleNetworkResponse(this)
+    return handleNetworkResponse(this)
 }
 
 
 
-@Keep
 fun <T> Call<T>.handleNetworkCall(): Flow<RetrofitResource<T>> {
-    return handler.handleNetworkCall(this)
+    return handleNetworkCall(this)
 }
 
 
@@ -89,7 +87,6 @@ fun <T> Call<T>.handleNetworkCall(): Flow<RetrofitResource<T>> {
  * @param call A suspending function that makes the network request and returns an [HttpResponse].
  * @return A Flow of [KtorResource] objects representing the processed network response.
  */
-@Keep
 inline fun < reified T> handleNetworkResponse(crossinline call: suspend () -> HttpResponse): Flow<KtorResource<T>> {
     return flow {
         emit(KtorResource.Loading(isLoading = true))
@@ -136,13 +133,10 @@ inline fun < reified T> handleNetworkResponse(crossinline call: suspend () -> Ht
                 )
             )
         } catch (e: SecurityException) {
-
             emit(KtorResource.Error("Connection Timeout"))
         } catch (e: SocketTimeoutException) {
-
             emit(KtorResource.Error("Socket Timeout"))
         } catch (e: IOException) {
-
             emit(KtorResource.Error(e.message ?: "Unknown IO Error"))
         } catch (e: TimeoutException) {
             emit(KtorResource.Error(e.message ?: "Unknown TimeoutException Error"))
@@ -153,7 +147,6 @@ inline fun < reified T> handleNetworkResponse(crossinline call: suspend () -> Ht
         } catch (e: UnsupportedOperationException) {
             emit(KtorResource.Error(e.message ?: "UnsupportedOperationException"))
         }
-
         emit(KtorResource.Loading(isLoading = false))
     }
 }

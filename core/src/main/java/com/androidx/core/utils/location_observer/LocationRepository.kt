@@ -12,7 +12,7 @@ import android.os.Build
 import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
-import com.androidx.core.domain.LocationInterface
+
 import com.androidx.core.outlet.pub.CurrentLocationData
 import com.androidx.core.utils.permission.hasLocationPermission
 import com.google.android.gms.location.LocationServices
@@ -20,10 +20,10 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import kotlinx.coroutines.tasks.await
 
 
-internal class LocationRepository:LocationInterface  {
+internal class LocationRepository  {
 
-    override val isGpsEnabled = mutableStateOf(false)
-    override fun requestLocationEnabler(activity: Activity?, result: (Boolean) -> Unit) {
+     val isGpsEnabled = mutableStateOf(false)
+     fun requestLocationEnabler(activity: Activity?, result: (Boolean) -> Unit) {
         requestLocationEnable(activity, result)
     }
     private lateinit var locationManager: LocationManager
@@ -34,24 +34,24 @@ internal class LocationRepository:LocationInterface  {
 
 
 
-   override fun inIsGpsHardwareEnabled(context: Context): Boolean {
+    fun inIsGpsHardwareEnabled(context: Context): Boolean {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
-    override fun openLocationSetting(context: Context) {
+     fun openLocationSetting(context: Context) {
         val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }
 
-   override fun registerGpsStateReceiver(context: Context) {
+    fun registerGpsStateReceiver(context: Context) {
         val intentFilter = IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION)
         context.registerReceiver(gpsStateReceiver, intentFilter)
         isLocationReceiverRegistered.value = true
     }
 
-    override fun unregisterGpsStateReceiver(context: Context) {
+     fun unregisterGpsStateReceiver(context: Context) {
         if (isLocationReceiverRegistered.value) {
             context.unregisterReceiver(gpsStateReceiver)
             isLocationReceiverRegistered.value = false
@@ -60,7 +60,7 @@ internal class LocationRepository:LocationInterface  {
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("MissingPermission")
-    override suspend fun getCurrentLocation(context: Context, priority: Int): CurrentLocationData? {
+     suspend fun getCurrentLocation(context: Context, priority: Int): CurrentLocationData? {
         if (context.hasLocationPermission()) {
             if (inIsGpsHardwareEnabled(context)) {
                 val locationClient = LocationServices.getFusedLocationProviderClient(context)
@@ -85,7 +85,7 @@ internal class LocationRepository:LocationInterface  {
     }
 
     @SuppressLint("MissingPermission")
-    override fun getLocation(
+     fun getLocation(
         context: Context, onResult: (CurrentLocationData?) -> Unit,
         onFailure: (String) -> Unit,
         onGpsEnabled: (String) -> Unit,
@@ -156,7 +156,7 @@ internal class LocationRepository:LocationInterface  {
             return null
         }
     }
-    override fun removeGpsListener(listener: LocationListener){
+     fun removeGpsListener(listener: LocationListener){
         locationManager.removeUpdates(listener)
     }
 

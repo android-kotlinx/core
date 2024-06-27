@@ -2,25 +2,13 @@ package com.androidx.core.utils.network_handler
 
 import android.util.Log
 import com.androidx.core.awaitHandler
-import com.androidx.core.domain.HandlerInterface
 import com.androidx.core.getJSONObject
-import com.androidx.core.outlet.pub.KtorResource
 import com.androidx.core.outlet.pub.RetrofitResource
 import com.google.gson.JsonSyntaxException
-import io.ktor.client.call.body
-import io.ktor.client.plugins.ClientRequestException
-import io.ktor.client.plugins.RedirectResponseException
-import io.ktor.client.plugins.ResponseException
-import io.ktor.client.plugins.ServerResponseException
-import io.ktor.client.statement.HttpResponse
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
-import kotlinx.serialization.json.JsonObject
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.HttpException
@@ -29,8 +17,8 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeoutException
 
-internal class Handler:HandlerInterface {
-    override fun <T, O> handleNetworkResponse(
+
+    fun <T, O> handleNetworkResponse(
         call: suspend () -> Response<T>,
         mapFun: (it: T) -> O
     ): Flow<RetrofitResource<O>> {
@@ -77,7 +65,7 @@ internal class Handler:HandlerInterface {
         }.flowOn(Dispatchers.IO)
     }
 
-    override fun <T> handleNetworkResponse(response: Response<T>): Flow<RetrofitResource<T>>  {
+    fun <T> handleNetworkResponse(response: Response<T>): Flow<RetrofitResource<T>>  {
         return flow {
             emit(RetrofitResource.Loading(isLoading = true))
             try {
@@ -119,7 +107,7 @@ internal class Handler:HandlerInterface {
         }.flowOn(Dispatchers.IO)
     }
 
-    override fun <T> handleNetworkCall(call: Call<T>): Flow<RetrofitResource<T>>  {
+    fun <T> handleNetworkCall(call: Call<T>): Flow<RetrofitResource<T>>  {
         var code: Int?
         return flow {
             emit(RetrofitResource.Loading(isLoading = true))
@@ -155,6 +143,6 @@ internal class Handler:HandlerInterface {
 
         }.flowOn(Dispatchers.IO)
     }
-}
+
 
 

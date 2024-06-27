@@ -6,72 +6,83 @@ import android.net.Uri
 import android.os.Build
 import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
-import com.androidx.core.domain.ConverterInterface
-import com.androidx.core.utils.conveter.Converter
+import com.androidx.core.utils.conveter.cropCenter
+import com.androidx.core.utils.conveter.inConvertMillisToDate
+import com.androidx.core.utils.conveter.inConvertToWords
+import com.androidx.core.utils.conveter.toBase64
+import com.androidx.core.utils.conveter.toBitMapFromBase64
+import com.androidx.core.utils.conveter.toByteArray
+import com.androidx.core.utils.conveter.toDecodedBase64
+import com.androidx.core.utils.conveter.toEncodedBase64
+import com.androidx.core.utils.conveter.toFiveDigits
+import com.androidx.core.utils.conveter.toFourDigits
+import com.androidx.core.utils.conveter.toOneDigits
+import com.androidx.core.utils.conveter.toSevenDigits
+import com.androidx.core.utils.conveter.toSixDigits
+import com.androidx.core.utils.conveter.toThreeDigits
+import com.androidx.core.utils.conveter.toTime
+import com.androidx.core.utils.conveter.toTwoDigits
+import com.androidx.core.utils.conveter.toWholeNumber
 
 
-private val converter:ConverterInterface = Converter()
-
-
-@Keep
 fun Uri.toByteArray(context: Context): ByteArray? {
-    return  converter.toByteArray(this,context)
+    return  toByteArray(this,context)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-@Keep
 fun ByteArray?.toBase64(): String?  {
-    return converter.toBase64(this)
+    return toBase64(this)
 }
 
 
-@Keep
-fun String?.toEncodedBase64(): String? = converter.toEncodedBase64(this)
+
+fun String?.toEncodedBase64(): String? = toEncodedBase64(this)
 
 
-@Keep
-fun String?.toDecodedBase64(): String? = converter.toDecodedBase64(this)
 
-@Keep
-fun String?.toBitMapFromBase64(): Bitmap? = converter.toBitMapFromBase64(this)
+fun String?.toDecodedBase64(): String? = toDecodedBase64(this)
 
-@Keep
-fun Bitmap?.cropCenter(): Bitmap? = converter.cropCenter(this)
 
-@Keep
-fun Bitmap?.toByteArray(): ByteArray? = converter.toByteArray(this)
+fun String?.toBitMapFromBase64(): Bitmap? = toBitMapFromBase64(this)
 
-@Keep
-fun <T : Number> T.toWholeNumber(): T = converter.toWholeNumber(this)
 
-@Keep
-fun <T : Number> T.toOneDigits(): T = converter.toOneDigits(this)
+fun Bitmap?.cropCenter(): Bitmap? = cropCenter(this)
 
-@Keep
-fun <T : Number> T.toTwoDigits(): T = converter.toTwoDigits(this)
 
-@Keep
-fun <T : Number> T.toThreeDigits(): T = converter.toThreeDigits(this)
+fun Bitmap?.toByteArray(): ByteArray? = toByteArray(this)
 
-@Keep
-fun <T : Number> T.toFourDigits(): T = converter.toFourDigits(this)
 
-@Keep
-fun <T : Number> T.toFiveDigits(): T = converter.toFiveDigits(this)
-@Keep
-fun <T : Number> T.toSixDigits(): T = converter.toSixDigits(this)
-@Keep
-fun <T : Number> T.toSevenDigits(): T = converter.toSevenDigits(this)
+fun <T : Number> T.toWholeNumber(): T = toWholeNumber(this)
+
+
+fun <T : Number> T.toOneDigits(): T = toOneDigits(this)
+
+
+fun <T : Number> T.toTwoDigits(): T = toTwoDigits(this)
+
+
+fun <T : Number> T.toThreeDigits(): T = toThreeDigits(this)
+
+
+fun <T : Number> T.toFourDigits(): T = toFourDigits(this)
+
+
+fun <T : Number> T.toFiveDigits(): T = toFiveDigits(this)
+
+
+fun <T : Number> T.toSixDigits(): T = toSixDigits(this)
+
+
+fun <T : Number> T.toSevenDigits(): T = toSevenDigits(this)
 
 /**
  * Converts any number to "HH:mm:ss:SS" format string
  * */
-@Keep
-fun Number.toTime(): String = converter.toTime(this)
-
-@Keep
-fun convertMillisToDate(millis: Long?, pattern: String): String = converter.inConvertMillisToDate(millis, pattern)
+fun Number.toTime(): String = toTime(this)
 
 
-@Keep
-fun convertToWords(amount: Double): String = converter.inConvertToWords(amount)
+fun convertMillisToDate(millis: Long?, pattern: String): String = inConvertMillisToDate(millis, pattern)
+
+
+
+fun convertToWords(amount: Double): String = inConvertToWords(amount)

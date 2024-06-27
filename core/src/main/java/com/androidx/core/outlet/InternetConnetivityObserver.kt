@@ -1,14 +1,12 @@
 package com.androidx.core.outlet
 
 import android.content.Context
-import androidx.annotation.Keep
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.MutableLiveData
-import com.androidx.core.domain.InternetObserverInterface
-import com.androidx.core.utils.internet_observer.InternetObserver
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-private val internetObserver: InternetObserverInterface = InternetObserver()
+import com.androidx.core.utils.internet_observer.InInternetConnectivityListener
+import com.androidx.core.utils.internet_observer.inInternetConnectivityListener
+
 
 /**
  * [internetConnectivityListener] is a observer which keep observing connectivity of the network
@@ -29,7 +27,7 @@ onUnAvailable = {})
  *
  * it returns  "Available, Unavailable, Losing, Lost" state on connectivity change in the above functions respectively
  * **/
-@Keep
+
 fun internetConnectivityListener(
     lifecycleScope: LifecycleCoroutineScope,
     onAvailable: (it: String) -> Unit,
@@ -38,7 +36,7 @@ fun internetConnectivityListener(
     onLost: (it: String) -> Unit,
     context: Context
 ) {
-    return internetObserver.inInternetConnectivityListener(
+    return inInternetConnectivityListener(
         lifecycleScope = lifecycleScope,
         onAvailable = onAvailable,
         onUnAvailable = onUnAvailable,
@@ -53,7 +51,6 @@ fun internetConnectivityListener(
  * it returns a composable function  "Available, Unavailable, Losing, Lost" state on connectivity change in the above functions respectively
  * **/
 @Composable
-@Keep
 fun InternetConnectivityListener(
     lifecycleScope: LifecycleCoroutineScope,
     stateChangeText: MutableLiveData<String>? = null,
@@ -61,7 +58,8 @@ fun InternetConnectivityListener(
     onUnAvailable: () -> Unit = {},
     onLosing: () -> Unit = {},
     onLost: () -> Unit,
-) =internetObserver.InInternetConnectivityListener(
+) {
+    return InInternetConnectivityListener(
         lifecycleScope = lifecycleScope,
         stateChangeText = stateChangeText,
         onAvailable = onAvailable,
@@ -69,3 +67,4 @@ fun InternetConnectivityListener(
         onLosing = onLosing,
         onLost = onLost
     )
+}
